@@ -1,0 +1,5 @@
+RewriteEngine On
+
+Header set Access-Control-Allow-Origin "*"
+
+RewriteRule ^(actors|add-actors|add-countries|add-directors|add-genres|add-movie-files|add-movies|add-qualities|add-series|countries|directors|genres|index|movie-files|qualities|series|settings|home|movies|edit-movies|movie-subtitles|add-movie-subtitles|edit-series)$ $1.php [NC,L]
