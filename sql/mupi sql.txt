@@ -1,0 +1,336 @@
+CREATE TABLE tbl_admin (
+id_admin INT PRIMARY KEY AUTO_INCREMENT,
+nama_admin VARCHAR(255),
+username VARCHAR(255),
+password VARCHAR(255),
+email VARCHAR(255),
+tanggal_dibuat TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE tbl_aktor (
+id_aktor INT PRIMARY KEY AUTO_INCREMENT,
+nama_aktor VARCHAR(255),
+foto_aktor TEXT
+);
+
+CREATE TABLE tbl_countries (
+country_id INT AUTO_INCREMENT PRIMARY KEY,
+country_name VARCHAR(255),
+country_image VARCHAR(255)
+);
+
+INSERT INTO tbl_countries (country_name) VALUES 
+('Afghanistan'),
+('Albania'),
+('Algeria'),
+('Andorra'),
+('Angola'),
+('Antigua and Barbuda'),
+('Argentina'),
+('Armenia'),
+('Australia'),
+('Austria'),
+('Azerbaijan'),
+('Bahamas'),
+('Bahrain'),
+('Bangladesh'),
+('Barbados'),
+('Belarus'),
+('Belgium'),
+('Belize'),
+('Benin'),
+('Bhutan'),
+('Bolivia'),
+('Bosnia and Herzegovina'),
+('Botswana'),
+('Brazil'),
+('Brunei'),
+('Bulgaria'),
+('Burkina Faso'),
+('Burundi'),
+('Cabo Verde'),
+('Cambodia'),
+('Cameroon'),
+('Canada'),
+('Central African Republic'),
+('Chad'),
+('Chile'),
+('China'),
+('Colombia'),
+('Comoros'),
+('Congo (Congo-Brazzaville)'),
+('Costa Rica'),
+('Croatia'),
+('Cuba'),
+('Cyprus'),
+('Czechia (Czech Republic)'),
+('Denmark'),
+('Djibouti'),
+('Dominica'),
+('Dominican Republic'),
+('Ecuador'),
+('Egypt'),
+('El Salvador'),
+('Equatorial Guinea'),
+('Eritrea'),
+('Estonia'),
+('Eswatini (fmr. "Swaziland")'),
+('Ethiopia'),
+('Fiji'),
+('Finland'),
+('France'),
+('Gabon'),
+('Gambia'),
+('Georgia'),
+('Germany'),
+('Ghana'),
+('Greece'),
+('Grenada'),
+('Guatemala'),
+('Guinea'),
+('Guinea-Bissau'),
+('Guyana'),
+('Haiti'),
+('Holy See'),
+('Honduras'),
+('Hungary'),
+('Iceland'),
+('India'),
+('Indonesia'),
+('Iran'),
+('Iraq'),
+('Ireland'),
+('Israel'),
+('Italy'),
+('Jamaica'),
+('Japan'),
+('Jordan'),
+('Kazakhstan'),
+('Kenya'),
+('Kiribati'),
+('Kuwait'),
+('Kyrgyzstan'),
+('Laos'),
+('Latvia'),
+('Lebanon'),
+('Lesotho'),
+('Liberia'),
+('Libya'),
+('Liechtenstein'),
+('Lithuania'),
+('Luxembourg'),
+('Madagascar'),
+('Malawi'),
+('Malaysia'),
+('Maldives'),
+('Mali'),
+('Malta'),
+('Marshall Islands'),
+('Mauritania'),
+('Mauritius'),
+('Mexico'),
+('Micronesia'),
+('Moldova'),
+('Monaco'),
+('Mongolia'),
+('Montenegro'),
+('Morocco'),
+('Mozambique'),
+('Myanmar (formerly Burma)'),
+('Namibia'),
+('Nauru'),
+('Nepal'),
+('Netherlands'),
+('New Zealand'),
+('Nicaragua'),
+('Niger'),
+('Nigeria'),
+('North Korea'),
+('North Macedonia (formerly Macedonia)'),
+('Norway'),
+('Oman'),
+('Pakistan'),
+('Palau'),
+('Palestine State'),
+('Panama'),
+('Papua New Guinea'),
+('Paraguay'),
+('Peru'),
+('Philippines'),
+('Poland'),
+('Portugal'),
+('Qatar'),
+('Romania'),
+('Russia'),
+('Rwanda'),
+('Saint Kitts and Nevis'),
+('Saint Lucia'),
+('Saint Vincent and the Grenadines'),
+('Samoa'),
+('San Marino'),
+('Sao Tome and Principe'),
+('Saudi Arabia'),
+('Senegal'),
+('Serbia'),
+('Seychelles'),
+('Sierra Leone'),
+('Singapore'),
+('Slovakia'),
+('Slovenia'),
+('Solomon Islands'),
+('Somalia'),
+('South Africa'),
+('South Korea'),
+('South Sudan'),
+('Spain'),
+('Sri Lanka'),
+('Sudan'),
+('Suriname'),
+('Sweden'),
+('Switzerland'),
+('Syria'),
+('Tajikistan'),
+('Tanzania'),
+('Thailand'),
+('Timor-Leste'),
+('Togo'),
+('Tonga'),
+('Trinidad and Tobago'),
+('Tunisia'),
+('Turkey'),
+('Turkmenistan'),
+('Tuvalu'),
+('Uganda'),
+('Ukraine'),
+('United Arab Emirates'),
+('United Kingdom'),
+('United States of America'),
+('Uruguay'),
+('Uzbekistan'),
+('Vanuatu'),
+('Venezuela'),
+('Vietnam'),
+('Yemen'),
+('Zambia'),
+('Zimbabwe');
+
+CREATE TABLE tbl_director (
+id_director INT PRIMARY KEY AUTO_INCREMENT,
+nama_director VARCHAR(255),
+photo_director TEXT
+);
+
+CREATE TABLE tbl_genre (
+genre_id INT PRIMARY KEY AUTO_INCREMENT,
+nama_genre VARCHAR(255),
+gambar_genre VARCHAR(255)
+);
+
+CREATE TABLE tbl_kualitas (
+id_kualitas INT PRIMARY KEY AUTO_INCREMENT,
+nama_kualitas VARCHAR(255)
+);
+
+CREATE TABLE tbl_language (
+id_language INT PRIMARY KEY AUTO_INCREMENT,
+language VARCHAR(255),
+language_code VARCHAR(255)
+);
+
+CREATE TABLE tbl_movies (
+id_movies INT PRIMARY KEY AUTO_INCREMENT,
+judul VARCHAR(255),
+poster TEXT,
+jenis VARCHAR(255),
+genre VARCHAR(255),
+kualitas VARCHAR(255),
+aktor TEXT,
+director VARCHAR(255),
+tahun_rilis DATE,
+rating VARCHAR(255),
+api_url TEXT,
+tags TEXT,
+country VARCHAR(255),
+overview LONGTEXT,
+production VARCHAR(255),
+duration VARCHAR(255),
+trailer_url TEXT,
+status INT DEFAULT 1
+);
+
+CREATE TABLE tbl_movies_file (
+id INT PRIMARY KEY AUTO_INCREMENT,
+id_movie INT NOT NULL,
+hosting_name VARCHAR(255),
+url_embed VARCHAR(255),
+FOREIGN KEY (id_movie) REFERENCES tbl_movies(id_movies) ON DELETE CASCADE
+);
+
+CREATE TABLE tbl_movie_subtitles (
+id INT PRIMARY KEY AUTO_INCREMENT,
+movie_id INT,
+language_id INT,
+url_sub VARCHAR(255),
+posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (movie_id) REFERENCES tbl_movies(id_movies),
+FOREIGN KEY (language_id) REFERENCES tbl_countries(country_id)
+);
+
+CREATE TABLE tbl_production (
+id INT PRIMARY KEY AUTO_INCREMENT,
+production VARCHAR(255)
+);
+
+CREATE TABLE tbl_series (
+id_series INT PRIMARY KEY AUTO_INCREMENT,
+judul VARCHAR(255),
+poster TEXT,
+jenis VARCHAR(255),
+genre VARCHAR(255),
+episodes VARCHAR(255),
+seasons VARCHAR(255),
+series_status VARCHAR(255),
+aktor TEXT,
+director VARCHAR(255),
+tahun_rilis DATE,
+rating VARCHAR(255),
+api_url TEXT,
+tags TEXT,
+country VARCHAR(255),
+overview LONGTEXT,
+production VARCHAR(255),
+duration VARCHAR(255),
+trailer_url TEXT,
+status INT DEFAULT 1
+);
+
+CREATE TABLE tbl_setting (
+id INT AUTO_INCREMENT PRIMARY KEY,
+app_name VARCHAR(255)
+);
+
+CREATE TABLE tbl_tag (
+id INT AUTO_INCREMENT PRIMARY KEY,
+tag TEXT
+);
+
+CREATE TABLE tbl_series_episodes (
+id INT AUTO_INCREMENT PRIMARY KEY,
+series_id INT,
+title VARCHAR(255),
+external_url VARCHAR(255),
+files TEXT,
+FOREIGN KEY (series_id) REFERENCES tbl_series(id_series)
+);
+
+CREATE TABLE tbl_series_subtitles (
+id INT AUTO_INCREMENT PRIMARY KEY,
+series_id INT,
+episodes_id INT,
+language_id INT,
+url_sub VARCHAR(255),
+posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (series_id) REFERENCES tbl_series(id_series),
+FOREIGN KEY (language_id) REFERENCES tbl_countries(country_id),
+FOREIGN KEY (episodes_id) REFERENCES tbl_series_episodes(id)
+);

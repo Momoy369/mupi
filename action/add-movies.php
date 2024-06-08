@@ -8,14 +8,13 @@ if (isset($_POST['submit'])) {
     $judul = addslashes($_POST['judul']);
     $url = $_POST['movie_id'];
     $jenis = $_POST['jenis'];
-    $status = $_POST['statusInput'];
+    $status = isset($_POST['statusInput']) ? $_POST['statusInput'] : 1;
 
     // Ambil genre dari formulir dan gabungkan menjadi satu string
     $listOfGenre = $_POST['genre'];
     $separatedValueGenre = implode(',', $listOfGenre);
 
     $kualitas = $_POST['kualitas'];
-
     $production = $_POST['production'];
     $duration = $_POST['duration'];
 
@@ -38,7 +37,7 @@ if (isset($_POST['submit'])) {
 
     $overview = addslashes($_POST['overview']);
 
-    $duration = $_POST['duration'];
+    echo "Initial data retrieved successfully.<br>";
 
     // Pecah string tagsString menjadi tag-tag individu
     $tags = explode(',', $tagsString);
@@ -80,6 +79,8 @@ if (isset($_POST['submit'])) {
     // Bind ID tag ke dalam string yang dipisahkan koma
     $tagIdsString = implode(',', $newTagIds);
 
+    echo "Tags processed successfully.<br>";
+
     // Pecah string production menjadi production-production individu
     $productions = explode(',', $production);
 
@@ -119,6 +120,8 @@ if (isset($_POST['submit'])) {
 
     // Bind ID production ke dalam string yang dipisahkan koma
     $productionIdsString = implode(',', $newProductionIds);
+
+    echo "Productions processed successfully.<br>";
 
     // Ambil aktor dari formulir dan gabungkan menjadi satu string
     $actors = explode(',', $actorsString);
@@ -160,6 +163,8 @@ if (isset($_POST['submit'])) {
     // Bind ID aktor ke dalam string yang dipisahkan koma
     $actorIdsString = implode(',', $newActorIds);
 
+    echo "Actors processed successfully.<br>";
+
     // Ambil direktur dari formulir dan gabungkan menjadi satu string
     $directors = explode(',', $directorsString);
 
@@ -172,7 +177,7 @@ if (isset($_POST['submit'])) {
         $director = trim($director);
 
         // Cek apakah direktur sudah ada di tabel tbl_director
-        $checkDirectorQuery = "SELECT director_id FROM tbl_director WHERE nama_director = ?";
+        $checkDirectorQuery = "SELECT id_director FROM tbl_director WHERE nama_director = ?";
         $checkDirectorStmt = $conn->prepare($checkDirectorQuery);
         $checkDirectorStmt->bind_param("s", $director);
         $checkDirectorStmt->execute();
@@ -181,7 +186,7 @@ if (isset($_POST['submit'])) {
         // Jika direktur sudah ada, ambil ID-nya
         if ($checkDirectorResult->num_rows > 0) {
             $directorRow = $checkDirectorResult->fetch_assoc();
-            $directorId = $directorRow['director_id'];
+            $directorId = $directorRow['id_director'];
         } else {
             // Jika direktur belum ada, tambahkan direktur baru dan ambil ID-nya
             $insertDirectorQuery = "INSERT INTO tbl_director (nama_director) VALUES (?)";
@@ -200,43 +205,49 @@ if (isset($_POST['submit'])) {
     // Bind ID direktur ke dalam string yang dipisahkan koma
     $directorIdsString = implode(',', $newDirectorIds);
 
-    // Periksa apakah ada file gambar yang diunggah
-    if (!empty($_FILES['photo']['tmp_name'])) {
-        // Jika ada file gambar yang diunggah, simpan gambar tersebut
-        $file = $_FILES['photo']['tmp_name'];
-        $filename = $_FILES['photo']['name'];
-        $target_directory = "../images/poster/";
-        $new_poster = "poster" . time() . "_" . str_replace(" ", "", $filename);
-        $target_filepath = $target_directory . $new_poster;
-        $poster = $new_poster;
+    echo "Directors processed successfully.<br>";
 
-        // Pindahkan file gambar ke direktori target
-        if (move_uploaded_file($file, $target_filepath)) {
+    // Proses unggahan file gambar poster
+    if (isset($_FILES['photo']['name']) && $_FILES['photo']['name'] != "") {
+        $target_dir = "../images/posters/";
+        $poster = basename($_FILES['photo']['name']);
+        $target_filepath = $target_dir . $poster;
+
+        // Pindahkan file gambar yang diunggah ke target
+        if (move_uploaded_file($_FILES['photo']['tmp_name'], $target_filepath)) {
             // Simpan URL gambar poster yang diunggah ke dalam database
             $posterUrl = $poster;
         } else {
-            echo "Error: Files cannot be moved.";
+            echo "Error: Files cannot be moved.<br>";
             exit();
         }
     } else {
         // Jika tidak ada file gambar yang diunggah, gunakan URL gambar poster dari TMDb
-        // URL gambar poster dari TMDb
         $posterUrl = isset($_POST['photo2']) ? $_POST['photo2'] : '';
     }
+
+    echo "Poster processed successfully.<br>";
 
     // Buat query untuk menyimpan data film beserta URL gambar poster ke dalam database
     $insert = "INSERT INTO tbl_movies(judul, poster, jenis, genre, kualitas, aktor, director, tahun_rilis, rating, api_url, tags, country, overview, production, duration, trailer_url, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($insert);
+    if (!$stmt) {
+        echo "Error: " . $conn->error . "<br>";
+        error_log("Prepare failed: " . $conn->error);
+        exit();
+    }
     $stmt->bind_param("sssssssssssssssss", $judul, $posterUrl, $jenis, $separatedValueGenre, $kualitas, $actorIdsString, $directorIdsString, $tahun, $rating, $url, $tagIdsString, $separatedValueCountry, $overview, $productionIdsString, $duration, $trailerUrl, $status);
 
     // Eksekusi query
     if ($stmt->execute()) {
         // Jika penyimpanan berhasil, arahkan kembali ke halaman movies.php
+        echo "Data inserted successfully.<br>";
         header("Location: ../movies");
         exit();
     } else {
         // Jika gagal menyimpan data, tampilkan pesan kesalahan
-        echo "Error: " . $stmt->error;
+        echo "Error: " . $stmt->error . "<br>";
+        error_log("Database insert error: " . $stmt->error);
     }
 
     // Tutup prepared statement
@@ -245,6 +256,7 @@ if (isset($_POST['submit'])) {
     $conn->close();
 } else {
     // Jika tidak ada form yang disubmit, kembali ke halaman movies.php
+    echo "No form submitted.<br>";
     header("Location: ../movies");
     exit();
 }

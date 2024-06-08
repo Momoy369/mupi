@@ -174,7 +174,7 @@ if (isset($_POST['submit'])) {
         $director = trim($director);
 
         // Cek apakah direktur sudah ada di tabel tbl_director
-        $checkDirectorQuery = "SELECT director_id FROM tbl_director WHERE nama_director = ?";
+        $checkDirectorQuery = "SELECT id_director FROM tbl_director WHERE nama_director = ?";
         $checkDirectorStmt = $conn->prepare($checkDirectorQuery);
         $checkDirectorStmt->bind_param("s", $director);
         $checkDirectorStmt->execute();
@@ -183,7 +183,7 @@ if (isset($_POST['submit'])) {
         // Jika direktur sudah ada, ambil ID-nya
         if ($checkDirectorResult->num_rows > 0) {
             $directorRow = $checkDirectorResult->fetch_assoc();
-            $directorId = $directorRow['director_id'];
+            $directorId = $directorRow['id_director'];
         } else {
             // Jika direktur belum ada, tambahkan direktur baru dan ambil ID-nya
             $insertDirectorQuery = "INSERT INTO tbl_director (nama_director) VALUES (?)";
