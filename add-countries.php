@@ -47,7 +47,7 @@
                         <div class="card-header py-4">
                             <h5 class="m-0 font-weight-bold text-primary">Add Country</h5>
                         </div>
-                        <form class="form mt-4" role="form" method="POST" action="action/add-countries.php"
+                        <form class="form mt-4" role="form" method="POST" action="action/add-countries"
                             enctype="multipart/form-data">
                             <div class="form-group">
                                 <div class="row p-4">
@@ -55,12 +55,6 @@
                                         <label for="">Country Name</label>
                                         <input type="text" class="form-control" name="country_name" id="country_name">
                                     </div>
-
-                                    <!-- <div class="col-lg-3">
-                                        <label for="">Genre Cover</label>
-                                        <input class="form-control" type="file" id="formFile" name="photo"
-                                            accept="image/*">
-                                    </div> -->
 
                                 </div>
 

@@ -9,7 +9,7 @@
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <div class="modal-body">Pilih "Logout" di bawah untuk mengakhiri sesi.</div>
+            <div class="modal-body">Select "Logout" below to end the session.</div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                 <a class="btn btn-primary" href="include/logout.php">Logout</a>

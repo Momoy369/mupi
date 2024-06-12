@@ -39,8 +39,8 @@ $result = mysqli_fetch_assoc($ms);
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Movies Menu:</h6>
                 <a class="collapse-item" href="movies">Movie List</a>
-                <a class="collapse-item" href="movie-files">Movie Files</a>
-                <a class="collapse-item" href="movie-subtitles">Movie Subtitles</a>
+                <!-- <a class="collapse-item" href="movie-files">Movie Files</a> -->
+                <!-- <a class="collapse-item" href="movie-subtitles">Movie Subtitles</a> -->
             </div>
         </div>
     </li>
@@ -55,7 +55,7 @@ $result = mysqli_fetch_assoc($ms);
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Series Menu:</h6>
                 <a class="collapse-item" href="series">Series List</a>
-                <a class="collapse-item" href="series-subtitles">Series Subtitles</a>
+                <!-- <a class="collapse-item" href="series-subtitles">Series Subtitles</a> -->
             </div>
         </div>
     </li>

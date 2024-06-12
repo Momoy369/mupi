@@ -47,7 +47,7 @@
                         <div class="card-header py-4">
                             <h5 class="m-0 font-weight-bold text-primary">Add Movie</h5>
                         </div>
-                        <form class="form mt-4" role="form" method="POST" action="action/add-movies.php"
+                        <form class="form mt-4" role="form" method="POST" action="action/add-movies"
                             enctype="multipart/form-data">
                             <div class="form-group">
 
@@ -107,7 +107,7 @@
                                         <label for="directors">Film Directors</label>
                                         <input type="text" id="directors" name="directors"
                                             placeholder="Enter directors separated by comma" class="form-control">
-                                        <!-- Input tersembunyi untuk menyimpan nilai directors -->
+                                        <!-- Hidden input to store directors value -->
                                         <input type="hidden" id="directorsHidden" name="directorsHidden">
                                         <div class="row p-4" id="directorsDisplay"></div>
                                     </div>
@@ -120,7 +120,7 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <label for="">Category</label>
-                                        <select class="form-control" aria-label="Select Jenis" name="jenis">
+                                        <select class="form-control" aria-label="Select Category" name="jenis">
                                             <option value="Movies">Movie</option>
                                         </select>
                                     </div>
@@ -167,14 +167,14 @@
                                         <label for="actors">Actor/Actress</label>
                                         <input type="text" id="actors" name="actors"
                                             placeholder="Enter actor separated by comma" class="form-control">
-                                        <!-- Input tersembunyi untuk menyimpan nilai actors -->
+                                        <!-- Hidden input to store actors values -->
                                         <input type="hidden" id="actorsHidden" name="actorsHidden">
                                         <div class="row p-4" id="actorsDisplay"></div>
                                     </div>
                                     <div class="col-lg-3">
                                         <label for="">Release Date</label>
                                         <input type="date" class="form-control" id="tahun_rilis" name="tahun_rilis">
-                                        <!-- Elemen option akan diisi oleh JavaScript -->
+                                        <!-- The option element will be filled in by JavaScript -->
                                         </input>
                                     </div>
                                     <div class="col-lg-3">
@@ -190,7 +190,7 @@
                                         <label for="tags">Tags</label>
                                         <input type="text" id="tags" name="tags"
                                             placeholder="Enter tags separated by comma" class="form-control">
-                                        <!-- Input tersembunyi untuk menyimpan nilai tag -->
+                                        <!-- Hidden input to store tag values -->
                                         <input type="hidden" id="tagsHidden" name="tagsHidden">
                                         <div class="row p-4" id="tagsDisplay"></div>
                                     </div>
@@ -235,7 +235,7 @@
                                                 Inactive
                                             </label>
                                         </div>
-                                        <!-- Input hidden untuk menyimpan nilai status yang akan dikirim -->
+                                        <!-- Hidden input to store the status value to be sent -->
                                         <input type="hidden" name="statusInput" id="statusInput" value="1">
                                     </div>
 
@@ -250,7 +250,7 @@
 
                                     <div class="col-lg-6">
                                         <label for="">The trailer will appear here</label>
-                                        <!-- URL trailer akan diisi di sini -->
+                                        <!-- The trailer URL will be filled in here -->
                                         <div id="trailer"></div>
                                     </div>
                                     <input type="hidden" id="trailer-url" name="trailer-url">
@@ -286,10 +286,10 @@
     <?php include (ROOT_PATH . 'include/addition-select.php'); ?>
 
     <script>
-        // Menangani perubahan pada radio button
+        // Handle changes to radio buttons
         document.querySelectorAll('input[name="status"]').forEach(function (radio) {
             radio.addEventListener('change', function () {
-                // Set nilai input hidden berdasarkan radio button yang dipilih
+                // Set hidden input value based on selected radio button
                 if (this.id === 'active') {
                     document.getElementById('statusInput').value = 1; // Active = 1
                 } else if (this.id === 'inactive') {
@@ -302,7 +302,7 @@
     </script>
 
     <script>
-        // Fungsi untuk mengelola inputan tags, actors, dan directors
+        // Function for managing input tags, actors, and directors
         function setupInput(inputId, hiddenInputId, displayId, dataArray) {
             var input = document.getElementById(inputId);
             var hiddenInput = document.getElementById(hiddenInputId);
@@ -340,13 +340,13 @@
             }
         }
 
-        // Panggil fungsi untuk mengelola input tags
+        // Call the function to manage input tags
         setupInput('tags', 'tagsHidden', 'tagsDisplay', tags);
 
-        // Panggil fungsi untuk mengelola input actors
+        // Call the function to manage input actors
         setupInput('actors', 'actorsHidden', 'actorsDisplay', actors);
 
-        // Panggil fungsi untuk mengelola input directors
+        // Call the function to manage input directors
         setupInput('directors', 'directorsHidden', 'directorsDisplay', directors);
     </script>
 
@@ -365,33 +365,33 @@
                     fetch(apiUrl + tmdbMovieId + '?api_key=' + apiKey)
                         .then(response => response.json())
                         .then(data => {
-                            // Mengisi formulir dengan data yang diperoleh dari API TMDb
+                            // Fill out the form with data obtained from the TMDb API
                             document.getElementById('judul').value = data.original_title || '';
                             document.getElementById('tahun_rilis').value = data.release_date || '';
                             document.getElementById('rating').value = data.vote_average || '';
 
-                            // Mengambil nama genre dari setiap objek genre TMDb
+                            // Retrieves the genre name of each TMDb genre object
                             const genresTmdb = data.genres.map(genre => genre.name);
 
-                            // Mendapatkan opsi dropdown genre
+                            // Gets the genre dropdown option
                             const genreDropdown = document.getElementById('genre-movies');
 
-                            // Loop melalui setiap opsi dropdown genre
+                            // Loop through each genre dropdown option
                             for (let i = 0; i < genreDropdown.options.length; i++) {
-                                // Jika nama genre dalam dropdown ada dalam data genre TMDb, tandai sebagai terpilih
+                                // If the genre name in the dropdown is in the TMDb genre data, mark it as selected
                                 if (genresTmdb.includes(genreDropdown.options[i].text)) {
                                     genreDropdown.options[i].selected = true;
                                 }
                             }
 
-                            // Panggil metode trigger('change') untuk memperbarui tampilan plugin Select2
+                            // Call the trigger('change') method to update the Select2 plugin display
                             $(genreDropdown).trigger('change');
 
-                            // Mengambil nama production companies dari setiap objek production company
+                            // Takes the name of the production company from each production company object
                             const productionCompanies = data.production_companies.map(company => company.name);
-                            // Menggabungkan nama production companies menjadi satu string
+                            // Combines production company names into one string
                             const productionCompaniesString = productionCompanies.join(', ');
-                            // Mengisi formulir production companies
+                            // Fill out the production companies form
                             document.getElementById('productionCompanies').value = productionCompaniesString || '';
 
                             const countriesTmdb = data.production_countries.map(country => country.name);
@@ -406,10 +406,10 @@
 
                             $(countryDropdown).trigger('change');
 
-                            // Mengisi input dengan ID 'overview' dengan nilai overview dari respons API TMDb
+                            // Populates the input with ID 'overview' with the overview value from the TMDb API response
                             document.getElementById('overview').value = data.overview || 'Overview not available';
 
-                            // Mengatur atribut src dari elemen img untuk menampilkan gambar poster dari respons API TMDb
+                            // Set the src attribute of the img element to display the poster image from the TMDb API response
                             const posterPath = data.poster_path;
                             const posterUrl = posterPath ? 'https://image.tmdb.org/t/p/w500' + posterPath : 'https://t4.ftcdn.net/jpg/02/12/52/91/360_F_212529193_YRhcQCaJB9ugv5dFzqK25Uo9Ivm7B9Ca.jpg';
                             document.getElementById('posterPreview').src = posterUrl;
@@ -420,37 +420,37 @@
 
                             document.getElementById('posterPreview3').value = posterUrl || '';
 
-                            // Mengambil durasi film (duration) dari respons API TMDb dan mengisi elemen dengan ID 'duration'
+                            // Retrieves the duration of the movie (duration) from the TMDb API response and fills the element with the ID 'duration'
                             const duration = data.runtime;
                             document.getElementById('duration').value = duration ? duration + ' minutes' : 'Duration not available';
 
                             fetch(apiUrl + tmdbMovieId + '/keywords?api_key=' + apiKey)
                                 .then(response => response.json())
                                 .then(keywordsData => {
-                                    // Pastikan data keywords tersedia
+                                    // Make sure keyword data is available
                                     if (keywordsData.keywords && keywordsData.keywords.length > 0) {
-                                        // Mengambil keyword dari respons API TMDb
+                                        // Retrieves keywords from the TMDb API response
                                         const keywords = keywordsData.keywords.map(keyword => keyword.name);
 
-                                        // Menampilkan keyword dalam elemen #tagsDisplay
+                                        // Displays keywords in the #tagsDisplay element
                                         const tagsDisplay = document.getElementById('tagsDisplay');
-                                        tagsDisplay.innerHTML = ''; // Membersihkan konten sebelumnya
+                                        tagsDisplay.innerHTML = ''; // Cleaning up previous content
 
                                         keywords.forEach((keyword, index) => {
                                             const tagElement = document.createElement('span');
                                             tagElement.textContent = keyword;
                                             tagsDisplay.appendChild(tagElement);
 
-                                            // Tambahkan tanda koma setelah setiap kata kunci kecuali yang terakhir
+                                            // Add a comma after each keyword except the last one
                                             if (index < keywords.length - 1) {
                                                 tagsDisplay.appendChild(document.createTextNode(', '));
                                             }
                                         });
 
-                                        // Mengisi nilai input tersembunyi #tagsHidden dengan keyword yang dipisahkan oleh koma
+                                        // Fills the hidden input value #tagsHidden with keywords separated by commas
                                         document.getElementById('tagsHidden').value = keywords.join(',');
 
-                                        // Panggil metode trigger('change') setelah keyword ditampilkan
+                                        // Call the trigger('change') method after the keyword is displayed
                                         $('#tagsHidden').trigger('change');
                                     } else {
                                         console.error('Error: Keywords data not found');
@@ -466,10 +466,10 @@
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.results && data.results.length > 0) {
-                                        // Ambil URL trailer pertama dari respons
+                                        // Take the URL of the first trailer from the response
                                         const trailerUrl = `https://www.youtube.com/embed/${data.results[0].key}`;
 
-                                        // Buat elemen iframe untuk menampilkan trailer
+                                        // Create an iframe element to display the trailer
                                         const iframe = document.createElement('iframe');
                                         iframe.setAttribute('class', 'embed-responsive-item');
                                         iframe.setAttribute('src', trailerUrl);
@@ -478,19 +478,19 @@
                                         iframe.setAttribute('frameborder', '0');
                                         iframe.setAttribute('allowfullscreen', '');
 
-                                        // Dapatkan elemen div dengan ID 'trailer'
+                                        // Get div element with ID 'trailer'
                                         const trailerDiv = document.getElementById('trailer');
 
-                                        // Kosongkan isi elemen div jika sebelumnya sudah ada konten
+                                        // Empty the contents of the div element if it already has content
                                         trailerDiv.innerHTML = '';
 
-                                        // Sisipkan elemen iframe ke dalam elemen div 'trailer'
+                                        // Insert iframe element into 'trailer' div element
                                         trailerDiv.appendChild(iframe);
 
-                                        // Ambil elemen input hidden untuk menyimpan URL trailer
+                                        // Take a hidden input element to store the trailer URL
                                         const hiddenTrailerInput = document.getElementById('trailer-url');
 
-                                        // Set nilai URL trailer ke dalam input hidden
+                                        // Set the trailer URL value to the hidden input
                                         hiddenTrailerInput.value = trailerUrl;
                                     } else {
                                         console.log('Trailer not available');
@@ -498,64 +498,64 @@
                                 })
                                 .catch(error => {
                                     console.error('Error:', error);
-                                    alert('Terjadi kesalahan saat mengambil trailer.');
+                                    alert('An error occurred while retrieving the trailer.');
                                 });
 
-                            // Ambil credit cast
+                            // Take credit cast
                             fetch(apiUrl + tmdbMovieId + '/credits?api_key=' + apiKey)
                                 .then(response => response.json())
                                 .then(creditsData => {
                                     if (creditsData.cast && creditsData.cast.length > 0) {
-                                        // Mengambil nama aktor dari setiap objek cast TMDb
+                                        // Retrieves the actor name of each TMDb cast object
                                         const actors = creditsData.cast.map(actor => actor.name);
 
-                                        // Menampilkan aktor dalam elemen #actorsDisplay
+                                        // Displays actors in the #actorsDisplay element
                                         const actorsDisplay = document.getElementById('actorsDisplay');
-                                        actorsDisplay.innerHTML = ''; // Membersihkan konten sebelumnya
+                                        actorsDisplay.innerHTML = ''; // Cleaning up previous content
 
                                         actors.forEach((actor, index) => {
                                             const actorElement = document.createElement('span');
                                             actorElement.textContent = actor;
                                             actorsDisplay.appendChild(actorElement);
 
-                                            // Tambahkan tanda koma setelah setiap nama aktor kecuali yang terakhir
+                                            // Add a comma after each actor's name except the last one
                                             if (index < actors.length - 1) {
                                                 actorsDisplay.appendChild(document.createTextNode(', '));
                                             }
                                         });
 
-                                        // Mengisi nilai input tersembunyi #actorsHidden dengan nama aktor yang dipisahkan oleh koma
+                                        // Populates the hidden input value #actorsHidden with actor names separated by commas
                                         document.getElementById('actorsHidden').value = actors.join(',');
 
-                                        // Panggil metode trigger('change') setelah nama aktor ditampilkan
+                                        // Call the trigger('change') method after the actor name is displayed
                                         $('#actorsHidden').trigger('change');
                                     } else {
                                         console.error('Error: Actor data not found');
                                     }
 
-                                    if (creditsData.crew && creditsData.crew.length > 0) { // Perbaiki disini
-                                        // Mengambil nama direktur dari data crew TMDb
+                                    if (creditsData.crew && creditsData.crew.length > 0) {
+                                        // Retrieves the director's name from TMDb crew data
                                         const directors = creditsData.crew.filter(member => member.job === 'Director').map(director => director.name);
 
-                                        // Menampilkan direktur dalam elemen #directorsDisplay
+                                        // Displays the director in the #directorsDisplay element
                                         const directorsDisplay = document.getElementById('directorsDisplay');
-                                        directorsDisplay.innerHTML = ''; // Membersihkan konten sebelumnya
+                                        directorsDisplay.innerHTML = ''; // Cleaning up previous content
 
-                                        directors.forEach((director, index) => { // Perbaiki disini
+                                        directors.forEach((director, index) => {
                                             const directorElement = document.createElement('span');
                                             directorElement.textContent = director;
                                             directorsDisplay.appendChild(directorElement);
 
-                                            // Tambahkan tanda koma setelah setiap nama direktur kecuali yang terakhir
+                                            // Add a comma after each director's name except the last
                                             if (index < directors.length - 1) {
                                                 directorsDisplay.appendChild(document.createTextNode(', '));
                                             }
                                         });
 
-                                        // Mengisi nilai input tersembunyi #directorsHidden dengan nama direktur yang dipisahkan oleh koma
+                                        // Fills the hidden input value #directorsHidden with the director names separated by commas
                                         document.getElementById('directorsHidden').value = directors.join(',');
 
-                                        // Panggil metode trigger('change') setelah nama direktur ditampilkan
+                                        // Call the trigger('change') method after the director name is displayed
                                         $('#directorsHidden').trigger('change');
                                     } else {
                                         console.error('Error: Director data not found');
@@ -563,14 +563,14 @@
                                 })
                                 .catch(error => {
                                     console.error('Error:', error);
-                                    alert('Terjadi kesalahan saat mengambil data cast dan direktur.');
+                                    alert('An error occurred while retrieving cast and director data.');
                                 });
 
 
                         })
                         .catch(error => {
                             console.error('Error:', error);
-                            alert('Terjadi kesalahan saat mengambil data.');
+                            alert('An error occurred while retrieving data.');
                         });
                 }
             };

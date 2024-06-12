@@ -2,24 +2,24 @@
 
 include '../include/koneksi.php';
 
-// Periksa apakah ada ID negara yang diterima melalui parameter GET
+// Check if there is a country ID received via the GET parameter
 if (isset($_GET['country_id'])) {
     $idCountry = $_GET['country_id'];
 
-    // Query untuk menghapus negara dari database
+    // Query to remove country from database
     $deleteCountryQuery = "DELETE FROM tbl_countries WHERE id_country = ?";
     $stmt = $conn->prepare($deleteCountryQuery);
     $stmt->bind_param("i", $idCountry);
     $stmt->execute();
 
-    // Tutup prepared statement
+    // Close the prepared statement
     $stmt->close();
 
-    // Redirect kembali ke halaman countries.php
-    header("Location: $baseurl/mupi/countries");
+    // Redirect back to countries.php page
+    header("Location: ../countries");
     exit();
 } else {
-    // Jika tidak ada ID negara yang diterima, redirect ke halaman countries.php
-    header("Location: $baseurl/mupi/countries");
+    // If no country ID is received, redirect to the countries.php page
+    header("Location: ../countries");
     exit();
 }

@@ -47,7 +47,7 @@
                         <div class="card-header py-4">
                             <h5 class="m-0 font-weight-bold text-primary">Add Film Directors</h5>
                         </div>
-                        <form class="form mt-4" role="form" method="POST" action="action/add-directors.php"
+                        <form class="form mt-4" role="form" method="POST" action="action/add-directors"
                             enctype="multipart/form-data">
                             <div class="form-group">
                                 <div class="row p-4">

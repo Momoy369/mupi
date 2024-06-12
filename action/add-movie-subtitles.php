@@ -3,70 +3,71 @@
 include '../include/koneksi.php';
 include '../images/baseurl.php';
 
-if (isset($_POST['submit'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
 
-    // Ambil nilai dari inputan
-    $movieSelect = $_POST['movie-select'];
+    // Take the value from the input
+    session_start();
+    $movie_id = $_SESSION['movie_id_ses'];
     $languageSelect = $_POST['language-select'];
 
-    // Mendapatkan id movie dari select option
-    $idMovie = $movieSelect;
-
-    // Mendapatkan judul movie dari database
+    // Get movie titles from the database
     $movieQuery = "SELECT judul FROM tbl_movies WHERE id_movies = ?";
-    $stmt = $conn->prepare($movieQuery);
-    $stmt->bind_param("i", $idMovie);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $movieData = $result->fetch_assoc();
+    $stmt_movie = $conn->prepare($movieQuery);
+    $stmt_movie->bind_param("i", $movie_id);
+    $stmt_movie->execute();
+    $result_movie = $stmt_movie->get_result();
+    $movieData = $result_movie->fetch_assoc();
     $judulMovie = $movieData['judul'];
+    $stmt_movie->close();
 
-    // Mendapatkan nama bahasa dari database
-    $languageQuery = "SELECT language FROM tbl_language WHERE id_language = ?";
-    $stmt = $conn->prepare($languageQuery);
-    $stmt->bind_param("i", $languageSelect);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $languageData = $result->fetch_assoc();
+    // Gets the language name from the database
+    $languageQuery = "SELECT language, language_code FROM tbl_language WHERE id_language = ?";
+    $stmt_language = $conn->prepare($languageQuery);
+    $stmt_language->bind_param("i", $languageSelect);
+    $stmt_language->execute();
+    $result_language = $stmt_language->get_result();
+    $languageData = $result_language->fetch_assoc();
     $languageName = $languageData['language'];
+    $languageCode = $languageData['language_code'];
+    $stmt_language->close();
 
-    // Menyiapkan array untuk menyimpan data inputan
+    // Prepare an array to store input data
     $inputData = array(
         'Own Server' => $_FILES['direct']
     );
 
-    // Loop melalui array input data
+    // Loop through the input data array
     foreach ($inputData as $hostingName => $directFile) {
-        // Jika file telah dipilih untuk diunggah
+        // If a file has been selected for upload
         if (!empty($directFile['name'])) {
-            // Tentukan direktori penyimpanan file
+            // Specify the file storage directory
             $targetDirectory = "../files/subtitles/movies/";
 
-            // Tentukan nama file yang akan disimpan
-            $fileName = "subtitle_" . str_replace(' ', '_', $judulMovie) . "_" . str_replace(' ', '_', $languageName) . "." . pathinfo($directFile['name'], PATHINFO_EXTENSION);
+            // Specify the name of the file to save
+            $fileName = "subtitle_" . str_replace(' ', '_', $judulMovie) . "_" . str_replace(' ', '_', $languageName) . "_" . str_replace(' ', '_', $languageCode) . "." . pathinfo($directFile['name'], PATHINFO_EXTENSION);
 
-            // Pindahkan file ke direktori target
+            // Move the files to the target directory
             if (move_uploaded_file($directFile["tmp_name"], $targetDirectory . $fileName)) {
-                // URL embed akan mengikuti base URL dan diikuti nama file
+                // The embed URL will follow the base URL followed by the file name
                 $urlEmbed = $fileName;
 
-                // Eksekusi query untuk menyimpan data ke database
+                // Execute queries to save data to the database
                 $query = "INSERT INTO tbl_movie_subtitles (movie_id, language_id, url_sub) VALUES (?, ?, ?)";
-                $stmt = $conn->prepare($query);
-                $stmt->bind_param("iis", $idMovie, $languageSelect, $urlEmbed);
-                $stmt->execute();
-                $stmt->close();
+                $stmt_insert = $conn->prepare($query);
+                $stmt_insert->bind_param("iis", $movie_id, $languageSelect, $urlEmbed);
+                $stmt_insert->execute();
+                $stmt_insert->close();
             } else {
-                // Gagal memindahkan file, handle kesalahan di sini
+                // Failed to move file, error handle here
                 echo "Error: Failed to move file.";
             }
         }
     }
 
-    // Tutup koneksi database
+    // Close the database connection
     $conn->close();
 
-    // Redirect kembali ke halaman yang sesuai
-    header("Location: ../movie-subtitles");
+    // Redirect back to the appropriate page
+    header("Location: ../movies-subtitles?movies=" . $movie_id);
     exit();
 }

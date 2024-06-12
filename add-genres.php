@@ -47,7 +47,7 @@
                         <div class="card-header py-4">
                             <h5 class="m-0 font-weight-bold text-primary">Add Genre</h5>
                         </div>
-                        <form class="form mt-4" role="form" method="POST" action="action/add-genres.php"
+                        <form class="form mt-4" role="form" method="POST" action="action/add-genres"
                             enctype="multipart/form-data">
                             <div class="form-group">
                                 <div class="row p-4">
@@ -55,12 +55,6 @@
                                         <label for="">Genre Name</label>
                                         <input type="text" class="form-control" name="nama_genre" id="nama_genre">
                                     </div>
-
-                                    <!-- <div class="col-lg-3">
-                                        <label for="">Genre Cover</label>
-                                        <input class="form-control" type="file" id="formFile" name="photo"
-                                            accept="image/*">
-                                    </div> -->
 
                                 </div>
 

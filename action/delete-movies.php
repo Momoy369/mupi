@@ -2,45 +2,45 @@
 
 include '../include/koneksi.php';
 
-// Periksa apakah ada ID yang diterima melalui parameter GET
+// Check if there is an ID received via the GET parameter
 if (isset($_GET['id_movies'])) {
     $idMovie = $_GET['id_movies'];
 
-    // Query untuk mengambil URL gambar poster film yang akan dihapus
+    // Query to retrieve the URL of the movie poster image to be deleted
     $getPosterQuery = "SELECT poster FROM tbl_movies WHERE id_movies = ?";
     $stmt = $conn->prepare($getPosterQuery);
     $stmt->bind_param("i", $idMovie);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Jika ada hasil yang ditemukan
+    // If any results are found
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $posterFilename = $row['poster'];
 
-        // Hapus file gambar poster dari local storage jika ada
+        // Delete the poster image file from local storage if there is one
         if (!empty($posterFilename)) {
             $posterFilePath = "../images/poster/" . $posterFilename;
             if (file_exists($posterFilePath)) {
-                unlink($posterFilePath); // Hapus file gambar poster
+                unlink($posterFilePath); // Delete the poster image file
             }
         }
     }
 
-    // Query untuk menghapus film dari database
+    // Query to delete a movie from the database
     $deleteMovieQuery = "DELETE FROM tbl_movies WHERE id_movies = ?";
     $stmt = $conn->prepare($deleteMovieQuery);
     $stmt->bind_param("i", $idMovie);
     $stmt->execute();
 
-    // Tutup prepared statement
+    // Close the prepared statement
     $stmt->close();
 
-    // Redirect kembali ke halaman movies.php
+    // Redirect back to the movies.php page
     header("Location: ../movies");
     exit();
 } else {
-    // Jika tidak ada ID yang diterima, redirect ke halaman movies.php
+    // If no ID is received, redirect to the movies.php page
     header("Location: ../movies");
     exit();
 }

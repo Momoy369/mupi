@@ -4,13 +4,13 @@ include '../include/koneksi.php';
 include '../include/baseurl.php';
 
 if (isset($_POST['submit'])) {
-    // Ambil data dari formulir
+    // Retrieve data from the form
     $judul = addslashes($_POST['judul']);
     $url = $_POST['movie_id'];
     $jenis = $_POST['jenis'];
     $status = isset($_POST['statusInput']) ? $_POST['statusInput'] : 1;
 
-    // Ambil genre dari formulir dan gabungkan menjadi satu string
+    // Take the genres of the form and combine them into one string
     $listOfGenre = $_POST['genre'];
     $separatedValueGenre = implode(',', $listOfGenre);
 
@@ -18,13 +18,13 @@ if (isset($_POST['submit'])) {
     $production = $_POST['production'];
     $duration = $_POST['duration'];
 
-    // Ambil aktor dari formulir dan gabungkan menjadi satu string
+    // Take the actors from the form and combine them into one string
     $actorsString = $_POST['actorsHidden'];
 
-    // Ambil direktur dari formulir dan gabungkan menjadi satu string
+    // Take the directors from the form and combine them into one string
     $directorsString = $_POST['directorsHidden'];
 
-    // Ambil tag dari input tersembunyi
+    // Retrieve tags from hidden input
     $tagsString = $_POST['tagsHidden'];
 
     $tahun = $_POST['tahun_rilis'];
@@ -39,196 +39,196 @@ if (isset($_POST['submit'])) {
 
     echo "Initial data retrieved successfully.<br>";
 
-    // Pecah string tagsString menjadi tag-tag individu
+    // Break the string tagsString into individual tags
     $tags = explode(',', $tagsString);
 
-    // Siapkan array untuk menyimpan ID tag yang baru dibuat
+    // Set up an array to store the newly created tag IDs
     $newTagIds = array();
 
-    // Loop melalui setiap tag
+    // Loop through each tag
     foreach ($tags as $tag) {
-        // Hapus spasi di awal dan akhir tag
+        // Remove spaces at the beginning and end of the tag
         $tag = trim($tag);
 
-        // Cek apakah tag sudah ada di tabel tbl_tag
+        // Check whether the tag already exists in the tbl_tag table
         $checkTagQuery = "SELECT id FROM tbl_tag WHERE tag = ?";
         $checkTagStmt = $conn->prepare($checkTagQuery);
         $checkTagStmt->bind_param("s", $tag);
         $checkTagStmt->execute();
         $checkTagResult = $checkTagStmt->get_result();
 
-        // Jika tag sudah ada, ambil ID-nya
+        // If the tag already exists, retrieve its ID
         if ($checkTagResult->num_rows > 0) {
             $tagRow = $checkTagResult->fetch_assoc();
             $tagId = $tagRow['id'];
         } else {
-            // Jika tag belum ada, tambahkan tag baru dan ambil ID-nya
+            // If the tag doesn't already exist, add a new tag and retrieve its ID
             $insertTagQuery = "INSERT INTO tbl_tag (tag) VALUES (?)";
             $insertTagStmt = $conn->prepare($insertTagQuery);
             $insertTagStmt->bind_param("s", $tag);
             $insertTagStmt->execute();
 
-            // Simpan ID tag baru
+            // Save the new tag ID
             $tagId = $insertTagStmt->insert_id;
         }
 
-        // Simpan ID tag ke dalam array
+        // Save tag IDs into an array
         $newTagIds[] = $tagId;
     }
 
-    // Bind ID tag ke dalam string yang dipisahkan koma
+    // Bind tag IDs into comma-separated strings
     $tagIdsString = implode(',', $newTagIds);
 
     echo "Tags processed successfully.<br>";
 
-    // Pecah string production menjadi production-production individu
+    // Break string production into individual productions
     $productions = explode(',', $production);
 
-    // Siapkan array untuk menyimpan ID production yang baru dibuat
+    // Set up an array to store the newly created production ID
     $newProductionIds = array();
 
-    // Loop melalui setiap production
+    // Loop through each production
     foreach ($productions as $productionItem) {
-        // Hapus spasi di awal dan akhir production
+        // Remove spaces at the beginning and end of production
         $productionItem = trim($productionItem);
 
-        // Cek apakah production sudah ada di tabel tbl_production
+        // Check whether production already exists in the tbl_production table
         $checkProductionQuery = "SELECT id FROM tbl_production WHERE production = ?";
         $checkProductionStmt = $conn->prepare($checkProductionQuery);
         $checkProductionStmt->bind_param("s", $productionItem);
         $checkProductionStmt->execute();
         $checkProductionResult = $checkProductionStmt->get_result();
 
-        // Jika production sudah ada, ambil ID-nya
+        // If production already exists, take the ID
         if ($checkProductionResult->num_rows > 0) {
             $productionRow = $checkProductionResult->fetch_assoc();
             $productionId = $productionRow['id'];
         } else {
-            // Jika production belum ada, tambahkan production baru dan ambil ID-nya
+            // If production doesn't exist yet, add a new production and get its ID
             $insertProductionQuery = "INSERT INTO tbl_production (production) VALUES (?)";
             $insertProductionStmt = $conn->prepare($insertProductionQuery);
             $insertProductionStmt->bind_param("s", $productionItem);
             $insertProductionStmt->execute();
 
-            // Simpan ID production baru
+            // Save the new production ID
             $productionId = $insertProductionStmt->insert_id;
         }
 
-        // Simpan ID production ke dalam array
+        // Save the production ID into an array
         $newProductionIds[] = $productionId;
     }
 
-    // Bind ID production ke dalam string yang dipisahkan koma
+    // Bind the production ID into a comma separated string
     $productionIdsString = implode(',', $newProductionIds);
 
     echo "Productions processed successfully.<br>";
 
-    // Ambil aktor dari formulir dan gabungkan menjadi satu string
+    // Take the actors from the form and combine them into one string
     $actors = explode(',', $actorsString);
 
-    // Siapkan array untuk menyimpan ID aktor yang baru dibuat
+    // Set up an array to store the newly created actor IDs
     $newActorIds = array();
 
-    // Loop melalui setiap aktor
+    // Loop through each actor
     foreach ($actors as $actor) {
-        // Hapus spasi di awal dan akhir aktor
+        // Remove spaces at the beginning and end of the actor
         $actor = trim($actor);
 
-        // Cek apakah aktor sudah ada di tabel tbl_aktor
+        // Check whether the actor already exists in the tbl_actor table
         $checkActorQuery = "SELECT id_aktor FROM tbl_aktor WHERE nama_aktor = ?";
         $checkActorStmt = $conn->prepare($checkActorQuery);
         $checkActorStmt->bind_param("s", $actor);
         $checkActorStmt->execute();
         $checkActorResult = $checkActorStmt->get_result();
 
-        // Jika aktor sudah ada, ambil ID-nya
+        // If the actor already exists, take his ID
         if ($checkActorResult->num_rows > 0) {
             $actorRow = $checkActorResult->fetch_assoc();
             $actorId = $actorRow['id_aktor'];
         } else {
-            // Jika aktor belum ada, tambahkan aktor baru dan ambil ID-nya
+            // If the actor doesn't exist yet, add a new actor and retrieve its ID
             $insertActorQuery = "INSERT INTO tbl_aktor (nama_aktor) VALUES (?)";
             $insertActorStmt = $conn->prepare($insertActorQuery);
             $insertActorStmt->bind_param("s", $actor);
             $insertActorStmt->execute();
 
-            // Simpan ID aktor baru
+            // Save the new actor ID
             $actorId = $insertActorStmt->insert_id;
         }
 
-        // Simpan ID aktor ke dalam array
+        // Save the actor IDs into an array
         $newActorIds[] = $actorId;
     }
 
-    // Bind ID aktor ke dalam string yang dipisahkan koma
+    // Bind actor IDs into comma-separated strings
     $actorIdsString = implode(',', $newActorIds);
 
     echo "Actors processed successfully.<br>";
 
-    // Ambil direktur dari formulir dan gabungkan menjadi satu string
+    // Take the directors from the form and combine them into one string
     $directors = explode(',', $directorsString);
 
-    // Siapkan array untuk menyimpan ID direktur yang baru dibuat
+    // Set up an array to store the newly created director IDs
     $newDirectorIds = array();
 
-    // Loop melalui setiap direktur
+    // Loop through each director
     foreach ($directors as $director) {
-        // Hapus spasi di awal dan akhir direktur
+        // Remove spaces at the beginning and end of the director
         $director = trim($director);
 
-        // Cek apakah direktur sudah ada di tabel tbl_director
+        // Check whether the director already exists in the tbl_director table
         $checkDirectorQuery = "SELECT id_director FROM tbl_director WHERE nama_director = ?";
         $checkDirectorStmt = $conn->prepare($checkDirectorQuery);
         $checkDirectorStmt->bind_param("s", $director);
         $checkDirectorStmt->execute();
         $checkDirectorResult = $checkDirectorStmt->get_result();
 
-        // Jika direktur sudah ada, ambil ID-nya
+        // If the director is already there, take his ID
         if ($checkDirectorResult->num_rows > 0) {
             $directorRow = $checkDirectorResult->fetch_assoc();
             $directorId = $directorRow['id_director'];
         } else {
-            // Jika direktur belum ada, tambahkan direktur baru dan ambil ID-nya
+            // If the director doesn't exist yet, add a new director and retrieve his ID
             $insertDirectorQuery = "INSERT INTO tbl_director (nama_director) VALUES (?)";
             $insertDirectorStmt = $conn->prepare($insertDirectorQuery);
             $insertDirectorStmt->bind_param("s", $director);
             $insertDirectorStmt->execute();
 
-            // Simpan ID direktur baru
+            // Save the new director ID
             $directorId = $insertDirectorStmt->insert_id;
         }
 
-        // Simpan ID direktur ke dalam array
+        // Save director IDs into an array
         $newDirectorIds[] = $directorId;
     }
 
-    // Bind ID direktur ke dalam string yang dipisahkan koma
+    // Bind the director ID into a comma separated string
     $directorIdsString = implode(',', $newDirectorIds);
 
     echo "Directors processed successfully.<br>";
 
-    // Proses unggahan file gambar poster
+    // Poster image file upload process
     if (isset($_FILES['photo']['name']) && $_FILES['photo']['name'] != "") {
         $target_dir = "../images/posters/";
         $poster = basename($_FILES['photo']['name']);
         $target_filepath = $target_dir . $poster;
 
-        // Pindahkan file gambar yang diunggah ke target
+        // Move the uploaded image file to the target
         if (move_uploaded_file($_FILES['photo']['tmp_name'], $target_filepath)) {
-            // Simpan URL gambar poster yang diunggah ke dalam database
+            // Save the URL of the uploaded poster image into the database
             $posterUrl = $poster;
         } else {
             echo "Error: Files cannot be moved.<br>";
             exit();
         }
     } else {
-        // Jika tidak ada file gambar yang diunggah, gunakan URL gambar poster dari TMDb
+        // If no image file has been uploaded, use the poster image URL from TMDb
         $posterUrl = isset($_POST['photo2']) ? $_POST['photo2'] : '';
     }
 
     echo "Poster processed successfully.<br>";
 
-    // Buat query untuk menyimpan data film beserta URL gambar poster ke dalam database
+    // Create a query to save film data along with poster image URLs into the database
     $insert = "INSERT INTO tbl_movies(judul, poster, jenis, genre, kualitas, aktor, director, tahun_rilis, rating, api_url, tags, country, overview, production, duration, trailer_url, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($insert);
     if (!$stmt) {
@@ -238,24 +238,24 @@ if (isset($_POST['submit'])) {
     }
     $stmt->bind_param("sssssssssssssssss", $judul, $posterUrl, $jenis, $separatedValueGenre, $kualitas, $actorIdsString, $directorIdsString, $tahun, $rating, $url, $tagIdsString, $separatedValueCountry, $overview, $productionIdsString, $duration, $trailerUrl, $status);
 
-    // Eksekusi query
+    // Query execution
     if ($stmt->execute()) {
-        // Jika penyimpanan berhasil, arahkan kembali ke halaman movies.php
+        // If the save is successful, redirect to the movies.php page
         echo "Data inserted successfully.<br>";
         header("Location: ../movies");
         exit();
     } else {
-        // Jika gagal menyimpan data, tampilkan pesan kesalahan
+        // If it fails to save data, display an error message
         echo "Error: " . $stmt->error . "<br>";
         error_log("Database insert error: " . $stmt->error);
     }
 
-    // Tutup prepared statement
+    // Close the prepared statement
     $stmt->close();
-    // Tutup koneksi database
+    // Close the database connection
     $conn->close();
 } else {
-    // Jika tidak ada form yang disubmit, kembali ke halaman movies.php
+    // If no form has been submitted, return to the movies.php page
     echo "No form submitted.<br>";
     header("Location: ../movies");
     exit();

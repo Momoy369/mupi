@@ -48,41 +48,25 @@
                         <div class="card-header py-4">
                             <h5 class="m-0 font-weight-bold text-primary">Add Movie Files</h5>
                         </div>
-                        <form class="form mt-4" role="form" method="POST" action="action/add-movie-files.php"
+                        <?php
+                        include 'include/koneksi.php';
+                        $id = $_GET['movies'];
+                        $_SESSION['movie_id_ses'] = $id;
+
+                        $queryEditMovies = "SELECT * FROM tbl_movies WHERE id_movies = '" . $id . "'";
+                        $qem = mysqli_query($conn, $queryEditMovies);
+                        $resultMovies = mysqli_fetch_assoc($qem);
+                        ?>
+                        <form class="form mt-4" role="form" method="POST" action="action/add-movie-files"
                             enctype="multipart/form-data">
                             <div class="form-group">
 
-                                <?php include 'include/koneksi.php';
-
-                                $movie_que = "SELECT * FROM tbl_movies";
-                                $movie_sel = mysqli_query($conn, $movie_que);
-
-                                $movie_sel_equals = mysqli_query($conn, $movie_que);
-                                $data_name = mysqli_fetch_assoc($movie_sel_equals);
-
-                                ?>
-
                                 <div class="row p-4">
-                                    <div class="col-lg-6">
-                                        <label for="movie-select">Choose Movies</label>
-                                        <select name="movie-select" id="movie-select" class="form-control">
-                                            <option value="" selected>-- Select a movie --</option>
-                                            <?php
-                                            while ($data = mysqli_fetch_assoc($movie_sel)) {
-                                                $tahun_rilis = date('Y', strtotime($data['tahun_rilis']));
-                                                $selected = ($data['id_movies'] == $data_name['id_movies']) ? '' : ''; // Periksa apakah opsi ini yang dipilih
-                                                ?>
-                                                <option value="<?= $data['id_movies']; ?>" <?= $selected; ?>
-                                                    data-api-url="<?= $data['api_url']; ?>">
-                                                    <?= $data['judul'] . ' (' . $tahun_rilis . ')'; ?>
-                                                </option>
-                                            <?php } ?>
-                                        </select>
-                                        <input type="hidden" id="api-url" value="<?= $data_name['api_url']; ?>">
-                                        <!-- Input tersembunyi untuk menyimpan api_url -->
-                                    </div>
 
-                                    <div class="col-lg-6">
+                                    <!-- <input type="hidden" value="<?= $resultMovies['api_url']; ?>" id="api_url"
+                                        name="api_url"> -->
+
+                                    <div class="col-lg-12">
                                         <label for="">Directly Upload to Own Server</label>
                                         <i class="fas fa-info-circle ml-1" data-toggle="tooltip" data-placement="right"
                                             title="Upload your content to this server directly"></i>
@@ -104,7 +88,8 @@
                                                 data-placement="right"
                                                 title="To use subtitles manually, change the VidSrc URL to https://vidsrc.to/embed/movie/{id}?sub.file={sub_file}&sub.label={sub_label}. Example: https://vidsrc.to/embed/movie/550?sub.file=sub.com/subs.vtt&sub.label=Indonesia"></i>
                                         </label>
-                                        <input type="text" class="form-control" name="vidsrc" id="vidsrc">
+                                        <input type="text" class="form-control" name="vidsrc" id="vidsrc"
+                                            value="https://vidsrc.to/embed/movie/<?= $resultMovies['api_url']; ?>">
                                     </div>
                                 </div>
 
@@ -158,27 +143,8 @@
             $('[data-toggle="tooltip"]').tooltip();
         });
 
-        // Dapatkan elemen select dan input
-        const movieSelect = document.getElementById('movie-select');
-        const vidsrcInput = document.getElementById('vidsrc');
-        const apiUrlInput = document.getElementById('api-url'); // Dapatkan input tersembunyi untuk api_url
-
-        // Tambahkan event listener untuk mendengarkan perubahan pada select
-        movieSelect.addEventListener('change', function () {
-            // Dapatkan nilai yang dipilih dari select
-            const selectedOption = this.options[this.selectedIndex];
-            const selectedValue = selectedOption.value;
-
-            // Dapatkan api_url dari data-api-url pada opsi yang dipilih
-            const apiUrl = selectedOption.getAttribute('data-api-url');
-            // Jika tidak ada api_url dalam opsi yang dipilih, gunakan nilai dari input tersembunyi
-            const finalApiUrl = apiUrl ? apiUrl : apiUrlInput.value;
-
-            // Update nilai input VidSrc sesuai dengan nilai yang dipilih dari select dan api_url
-            vidsrcInput.value = 'https://vidsrc.to/embed/movie/' + finalApiUrl;
-        });
-
     </script>
+
 
 </body>
 

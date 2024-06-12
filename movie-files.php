@@ -45,8 +45,18 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-4 d-flex justify-content-between align-items-center">
-                            <h5 class="m-0 font-weight-bold text-primary">Movie Files</h5>
-                            <a href="add-movie-files" class="btn btn-sm btn-primary ml-auto">+ Files</a>
+                            <?php $id = $_GET['movies'];
+                            $_SESSION['id_movie'] = $id_movie;
+
+                            $queryEditMovies = "SELECT * FROM tbl_movies WHERE id_movies = '" . $id . "'";
+                            $qem = mysqli_query($conn, $queryEditMovies);
+                            $resultMovies = mysqli_fetch_assoc($qem);
+
+                            ?>
+                            <h5 class="m-0 font-weight-bold text-primary">
+                                <?= htmlspecialchars($resultMovies['judul']); ?> Files</h5>
+                            <a href="add-movie-files?movies=<?= $id; ?>" class="btn btn-sm btn-primary ml-auto">+
+                                Files</a>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -102,14 +112,16 @@
 
     <script>
         $(document).ready(function () {
+            var idMovie = getUrlParameter('movies');
+
             var movieFileListTable = $('#movieFile').DataTable({
                 responsive: true,
                 serverSide: true,
                 ajax: {
                     url: 'movie_files_get.php',
                     type: 'POST',
-                    data: function (d) {
-                        d.page = (d.start / d.length) + 1;
+                    data: {
+                        id_movie: idMovie
                     }
                 },
                 columns: [
@@ -130,6 +142,13 @@
                 }
             });
         });
+
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        };
     </script>
 
 </body>

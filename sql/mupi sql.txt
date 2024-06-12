@@ -255,7 +255,8 @@ overview LONGTEXT,
 production VARCHAR(255),
 duration VARCHAR(255),
 trailer_url TEXT,
-status INT DEFAULT 1
+status INT DEFAULT 1,
+posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE tbl_movies_file (
@@ -263,6 +264,7 @@ id INT PRIMARY KEY AUTO_INCREMENT,
 id_movie INT NOT NULL,
 hosting_name VARCHAR(255),
 url_embed VARCHAR(255),
+posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 FOREIGN KEY (id_movie) REFERENCES tbl_movies(id_movies) ON DELETE CASCADE
 );
 
@@ -273,7 +275,7 @@ language_id INT,
 url_sub VARCHAR(255),
 posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 FOREIGN KEY (movie_id) REFERENCES tbl_movies(id_movies),
-FOREIGN KEY (language_id) REFERENCES tbl_countries(country_id)
+FOREIGN KEY (language_id) REFERENCES tbl_language(id_language)
 );
 
 CREATE TABLE tbl_production (
@@ -301,7 +303,8 @@ overview LONGTEXT,
 production VARCHAR(255),
 duration VARCHAR(255),
 trailer_url TEXT,
-status INT DEFAULT 1
+status INT DEFAULT 1,
+posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE tbl_setting (
@@ -320,6 +323,8 @@ series_id INT,
 title VARCHAR(255),
 external_url VARCHAR(255),
 files TEXT,
+short_desc TEXT,
+posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 FOREIGN KEY (series_id) REFERENCES tbl_series(id_series)
 );
 

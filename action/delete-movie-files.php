@@ -2,43 +2,54 @@
 
 include '../include/koneksi.php';
 
-// Periksa apakah ada ID yang diterima melalui parameter GET
-if (isset($_GET['id'])) {
-    $idMovie = $_GET['id'];
+// Function to delete movie files and related data
+function deleteMovieFile($idMovieFile)
+{
+    global $conn;
 
-    // Ambil data file film yang akan dihapus
-    $query = "SELECT * FROM tbl_movies_file WHERE id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $idMovie);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // Retrieve the file information associated with the movie file to be deleted
+    $query_file = "SELECT url_embed, id_movie FROM tbl_movies_file WHERE id = ?";
+    $stmt_file = $conn->prepare($query_file);
+    $stmt_file->bind_param("i", $idMovieFile);
+    $stmt_file->execute();
+    $stmt_file->bind_result($file_name, $id_movie);
+    $stmt_file->fetch();
+    $stmt_file->close();
 
-    // Loop melalui hasil query
-    while ($row = $result->fetch_assoc()) {
-        // Hapus file dari local storage jika hosting adalah 'Own Server'
-        if ($row['hosting_name'] === 'Own Server') {
-            $filePath = "../files/movies-files/" . $row['url_embed'];
-            if (file_exists($filePath)) {
-                unlink($filePath); // Hapus file dari local storage
-            }
+    // Delete files from local storage if hosting is 'Own Server'
+    if ($file_name && strpos($file_name, 'movie_') === 0) {
+        $filePath = "../files/movies-files/" . $file_name;
+        if (file_exists($filePath)) {
+            unlink($filePath); // Delete files from local storage
         }
     }
 
-    // Hapus data file film dari database
+    // Delete movie file data from database
     $deleteQuery = "DELETE FROM tbl_movies_file WHERE id = ?";
-    $stmt = $conn->prepare($deleteQuery);
-    $stmt->bind_param("i", $idMovie);
-    $stmt->execute();
-    $stmt->close();
+    $stmt_delete = $conn->prepare($deleteQuery);
+    $stmt_delete->bind_param("i", $idMovieFile);
+    $stmt_delete->execute();
+    $stmt_delete->close();
 
-    // Tutup koneksi database
-    $conn->close();
+    // Return id_movie to return to the movie file list page
+    return $id_movie;
+}
 
-    // Redirect kembali ke halaman yang sesuai
-    header("Location: ../movie-files");
-    exit();
+// Check if there is a movie file ID received via the GET parameter
+if (isset($_GET['id'])) {
+    $idMovieFile = $_GET['id'];
+
+    // Call the function to delete the movie file
+    $idMovie = deleteMovieFile($idMovieFile);
+    if ($idMovie !== false) {
+        // Redirect back to the appropriate page
+        header("Location: ../movie-files?movies=" . $idMovie);
+        exit();
+    } else {
+        echo "Error: Failed to delete movie file.";
+    }
 } else {
-    // Jika tidak ada ID yang diterima, redirect ke halaman yang sesuai
-    header("Location: ../movie-files");
+    // If no movie file ID is received, redirect to the appropriate page
+    header("Location: ../movie-files?movies=" . $idMovie);
     exit();
 }

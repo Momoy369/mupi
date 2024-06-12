@@ -14,27 +14,27 @@ if (move_uploaded_file($strphoto_temp, "../images/actors/" . $md5photo)) {
     $insert = "INSERT INTO tbl_aktor (nama_aktor, foto_aktor) VALUES ('$nama', '$md5photo')";
 
     if (mysqli_query($conn, $insert)) {
-        // Jika penyimpanan berhasil, arahkan kembali ke halaman movies.php
+        // If saving is successful, navigate back to the movies.php page
         header("Location: $baseurl/mupi/actors");
         exit();
     } else {
-        // Jika gagal menyimpan data, tampilkan pesan kesalahan
+        // If it fails to save data, displays an error message
         echo "Error: " . mysqli_error($conn);
     }
 
 } else {
-    // // Jika tidak ada form yang disubmit, kembali ke halaman movies.php
+    // If no form has been submitted, return to the movies.php page
     // header("Location: $baseurl/mupi/actors");
     // exit();
 
     $insert = "INSERT INTO tbl_aktor (nama_aktor, foto_aktor) VALUES ('$nama', '$md5photo')";
 
     if (mysqli_query($conn, $insert)) {
-        // Jika penyimpanan berhasil, arahkan kembali ke halaman movies.php
-        header("Location: $baseurl/mupi/actors");
+        // If the saving is successful, redirect to the movies.php page
+        header("Location: ../actors");
         exit();
     } else {
-        // Jika gagal menyimpan data, tampilkan pesan kesalahan
+        // If it fails to save data, displays an error message
         echo "Error: " . mysqli_error($conn);
     }
 }

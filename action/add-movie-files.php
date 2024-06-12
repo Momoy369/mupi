@@ -3,19 +3,29 @@
 include '../include/koneksi.php';
 include '../images/baseurl.php';
 
-if (isset ($_POST['submit'])) {
-
-    // Ambil nilai dari inputan
-    $movieSelect = $_POST['movie-select'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
+    // Take the value from the input
+    session_start();
+    $movie_id = $_SESSION['movie_id_ses'];
     $doodstream = $_POST['doodstream'];
     $vidsrc = $_POST['vidsrc'];
     $hydrax = $_POST['hydrax'];
     $gdrive = $_POST['gdrive'];
 
-    // Mendapatkan id movie dari select option
-    $idMovie = $movieSelect;
+    // Gets the movie id from the session
+    $idMovie = $movie_id;
 
-    // Menyiapkan array untuk menyimpan data inputan
+    // Gets movie titles from database
+    $judulQuery = "SELECT judul FROM tbl_movies WHERE id_movies = ?";
+    $stmt_judul = $conn->prepare($judulQuery);
+    $stmt_judul->bind_param("i", $idMovie);
+    $stmt_judul->execute();
+    $result_judul = $stmt_judul->get_result();
+    $judulData = $result_judul->fetch_assoc();
+    $judul = $judulData['judul'];
+    $stmt_judul->close();
+
+    // Prepare an array to store input data
     $inputData = array(
         array('hosting_name' => 'Own Server', 'url_embed' => ''),
         array('hosting_name' => 'DoodStream', 'url_embed' => $doodstream),
@@ -24,53 +34,58 @@ if (isset ($_POST['submit'])) {
         array('hosting_name' => 'GDrive', 'url_embed' => $gdrive)
     );
 
-    // Loop melalui array input data
+    // Loop through the input data array
     foreach ($inputData as $data) {
         $hostingName = $data['hosting_name'];
         $urlEmbed = $data['url_embed'];
 
-        // Jika url_embed atau nama file tidak kosong, lanjutkan ke input data berikutnya
-        if (empty ($urlEmbed) && empty ($_FILES['direct']['name'])) {
-            continue;
-        }
-
-        // Jika hosting name adalah Own Server
-        if ($hostingName === 'Own Server') {
-            // Ambil file yang diunggah
+        // If the hosting name is Own Server and url_embed is not empty
+        if ($hostingName === 'Own Server' && !empty($urlEmbed)) {
+            // Execute queries to save data to the database
+            $query = "INSERT INTO tbl_movies_file (id_movie, hosting_name, url_embed) VALUES (?, ?, ?)";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("sss", $idMovie, $hostingName, $urlEmbed);
+            $stmt->execute();
+            $stmt->close();
+        } elseif ($hostingName !== 'Own Server' && !empty($urlEmbed)) {
+            // Execute queries to save data to the database
+            $query = "INSERT INTO tbl_movies_file (id_movie, hosting_name, url_embed) VALUES (?, ?, ?)";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("sss", $idMovie, $hostingName, $urlEmbed);
+            $stmt->execute();
+            $stmt->close();
+        } elseif ($hostingName === 'Own Server' && !empty($_FILES['direct']['name'])) {
+            // Retrieve the uploaded file
             $directFile = $_FILES['direct'];
 
-            // Jika file telah dipilih untuk diunggah
-            if (!empty ($directFile['name'])) {
-                // Tentukan direktori penyimpanan file
-                $targetDirectory = "../files/movies-files/";
+            // Specify the file storage directory
+            $targetDirectory = "../files/movies-files/";
 
-                // Tentukan nama file yang akan disimpan
-                $targetFileName = $targetDirectory . "movie_" . basename($directFile["name"]);
+            // Specify the name of the file to save
+            $targetFileName = $targetDirectory . "movie_" . str_replace(' ', '_', $judul) . "." . pathinfo($directFile['name'], PATHINFO_EXTENSION);
 
-                // Pindahkan file ke direktori target
-                if (move_uploaded_file($directFile["tmp_name"], $targetFileName)) {
-                    // URL embed akan mengikuti base URL dan diikuti nama file
-                    $urlEmbed = "movie_" . basename($directFile["name"]);
-                } else {
-                    // Gagal memindahkan file, handle kesalahan di sini
-                    echo "Error: Failed to move file.";
-                    continue; // Lanjutkan ke input data berikutnya jika ada kesalahan
-                }
+            // Move the files to the target directory
+            if (move_uploaded_file($directFile["tmp_name"], $targetFileName)) {
+                // The embed URL will follow the base URL followed by the file name
+                $urlEmbed = "movie_" . str_replace(' ', '_', $judul) . "." . pathinfo($directFile['name'], PATHINFO_EXTENSION);
+
+                // Execute queries to save data to the database
+                $query = "INSERT INTO tbl_movies_file (id_movie, hosting_name, url_embed) VALUES (?, ?, ?)";
+                $stmt = $conn->prepare($query);
+                $stmt->bind_param("sss", $idMovie, $hostingName, $urlEmbed);
+                $stmt->execute();
+                $stmt->close();
+            } else {
+                // Failed to move file, error handle here
+                echo "Error: Failed to move file.";
             }
         }
-
-        // Eksekusi query untuk menyimpan data ke database
-        $query = "INSERT INTO tbl_movies_file (id_movie, hosting_name, url_embed) VALUES (?, ?, ?)";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("sss", $idMovie, $hostingName, $urlEmbed);
-        $stmt->execute();
-        $stmt->close();
     }
 
-    // Tutup koneksi database
+    // Close the database connection
     $conn->close();
 
-    // Redirect kembali ke halaman yang sesuai
-    header("Location: ../movie-files.php");
+    // Redirect back to the appropriate page
+    header("Location: ../movie-files?movies=" . $movie_id);
     exit();
 }

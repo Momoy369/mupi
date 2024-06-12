@@ -18,6 +18,12 @@ $total_actors = mysqli_fetch_assoc($r_actors);
 $r_movie_subtitles = mysqli_query($conn, "SELECT COUNT(*) AS t_movie_subtitles FROM tbl_movie_subtitles");
 $total_movie_subtitles = mysqli_fetch_assoc($r_movie_subtitles);
 
+$r_series_subtitles = mysqli_query($conn, "SELECT COUNT(*) AS t_series_subtitles FROM tbl_series_subtitles");
+$total_series_subtitles = mysqli_fetch_assoc($r_series_subtitles);
+
+$r_series_episodes = mysqli_query($conn, "SELECT COUNT(*) AS t_series_episodes FROM tbl_series_episodes");
+$total_series_episodes = mysqli_fetch_assoc($r_series_episodes);
+
 ?>
 
 <body id="page-top">
@@ -132,8 +138,9 @@ $total_movie_subtitles = mysqli_fetch_assoc($r_movie_subtitles);
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Series File</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                                Series Episodes</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <?= $total_series_episodes['t_series_episodes']; ?></div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-file fa-2x text-gray-300"></i>
@@ -155,7 +162,9 @@ $total_movie_subtitles = mysqli_fetch_assoc($r_movie_subtitles);
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                 Series Subtitle</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <?= $total_series_subtitles['t_series_subtitles']; ?>
+                                            </div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-comments fa-2x text-gray-300"></i>
@@ -173,7 +182,8 @@ $total_movie_subtitles = mysqli_fetch_assoc($r_movie_subtitles);
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                 Movies Subtitle</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?= $total_movie_subtitles['t_movie_subtitles']; ?></div>
+                                                <?= $total_movie_subtitles['t_movie_subtitles']; ?>
+                                            </div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-comments fa-2x text-gray-300"></i>

@@ -4,13 +4,13 @@ include '../include/koneksi.php';
 
 if (isset($_POST['submit'])) {
 
-    $id = $_POST['id_series']; // Pastikan ID tersedia
+    $id = $_POST['id_series']; // Make sure ID is available
 
     $judul = addslashes($_POST['judul']);
     $jenis = $_POST['jenis'];
     $status = $_POST['statusInput'];
 
-    // Ambil genre dari formulir dan gabungkan menjadi satu string
+    // Take the genres of the form and combine them into one string
     $listOfGenre = $_POST['genre'];
     $separatedValueGenre = implode(',', $listOfGenre);
 
@@ -32,27 +32,27 @@ if (isset($_POST['submit'])) {
 
     $duration = $_POST['duration'];
 
-    // Buat query untuk memperbarui data film di dalam database
+    // Create a query to update movie data in the database
     $update = "UPDATE tbl_series SET judul = ?, jenis = ?, genre = ?, episodes = ?, seasons = ?, series_status = ?, tahun_rilis = ?, rating = ?, country = ?, overview = ?, duration = ?, trailer_url = ?, status = ? WHERE id_series = ?";
     $stmt = $conn->prepare($update);
     $stmt->bind_param("sssssssssssssi", $judul, $jenis, $separatedValueGenre, $episodes, $seasons, $series_status, $tahun, $rating, $separatedValueCountry, $overview, $duration, $trailerUrl, $status, $id);
 
-    // Eksekusi query
+    // Query execution
     if ($stmt->execute()) {
-        // Jika pembaruan berhasil, arahkan kembali ke halaman movies.php
+        // If the update is successful, redirect to the movies.php page
         header("Location: ../series");
         exit();
     } else {
-        // Jika gagal memperbarui data, tampilkan pesan kesalahan
+        // If data update fails, display an error message
         echo "Error: " . $stmt->error;
     }
 
-    // Tutup prepared statement
+    // Close the prepared statement
     $stmt->close();
-    // Tutup koneksi database
+    // Close the database connection
     $conn->close();
 } else {
-    // Jika tidak ada form yang disubmit, kembali ke halaman movies.php
+    // If no form has been submitted, return to the movies.php page
     header("Location: ../series");
     exit();
 }

@@ -2,45 +2,45 @@
 
 include '../include/koneksi.php';
 
-// Periksa apakah ada ID yang diterima melalui parameter GET
+// Check if there is an ID received via the GET parameter
 if (isset($_GET['id_series'])) {
     $idSeries = $_GET['id_series'];
 
-    // Query untuk mengambil URL gambar poster seri yang akan dihapus
+    // Query to retrieve the URL of the series poster image to be deleted
     $getPosterQuery = "SELECT poster FROM tbl_series WHERE id_series = ?";
     $stmt = $conn->prepare($getPosterQuery);
     $stmt->bind_param("i", $idSeries);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Jika ada hasil yang ditemukan
+    // If any results are found
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $posterFilename = $row['poster'];
 
-        // Hapus file gambar poster dari local storage jika ada
+        // Delete the poster image file from local storage if there is one
         if (!empty($posterFilename)) {
             $posterFilePath = "../images/poster/" . $posterFilename;
             if (file_exists($posterFilePath)) {
-                unlink($posterFilePath); // Hapus file gambar poster
+                unlink($posterFilePath); // Delete the poster image file
             }
         }
     }
 
-    // Query untuk menghapus seri dari database
+    // Query to delete a series from the database
     $deleteSeriesQuery = "DELETE FROM tbl_series WHERE id_series = ?";
     $stmt = $conn->prepare($deleteSeriesQuery);
     $stmt->bind_param("i", $idSeries);
     $stmt->execute();
 
-    // Tutup prepared statement
+    // Close the prepared statement
     $stmt->close();
 
-    // Redirect kembali ke halaman series.php
+    // Redirect back to the series.php page
     header("Location: ../series");
     exit();
 } else {
-    // Jika tidak ada ID yang diterima, redirect ke halaman series.php
+    // If no ID is received, redirect to the series.php page
     header("Location: ../series");
     exit();
 }

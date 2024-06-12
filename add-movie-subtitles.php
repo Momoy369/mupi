@@ -48,17 +48,15 @@
                         <div class="card-header py-4">
                             <h5 class="m-0 font-weight-bold text-primary">Add Movie Subtitles</h5>
                         </div>
-                        <form class="form mt-4" role="form" method="POST" action="action/add-movie-subtitles.php"
+                        <?php
+                        $id = $_GET['movies'];
+                        $_SESSION['movie_id_ses'] = $id;
+                        ?>
+                        <form class="form mt-4" role="form" method="POST" action="action/add-movie-subtitles"
                             enctype="multipart/form-data">
                             <div class="form-group">
 
                                 <?php include 'include/koneksi.php';
-
-                                $movie_que = "SELECT * FROM tbl_movies";
-                                $movie_sel = mysqli_query($conn, $movie_que);
-
-                                $movie_sel_equals = mysqli_query($conn, $movie_que);
-                                $data_name = mysqli_fetch_assoc($movie_sel_equals);
 
                                 $language_que = "SELECT * FROM tbl_language";
                                 $language_sel = mysqli_query($conn, $language_que);
@@ -69,24 +67,6 @@
                                 ?>
 
                                 <div class="row p-4">
-                                    <div class="col-lg-6">
-                                        <label for="movie-select">Choose Movies</label>
-                                        <select name="movie-select" id="movie-select" class="form-control" required>
-                                            <option value="" selected>-- Select a movie --</option>
-                                            <?php
-                                            while ($data = mysqli_fetch_assoc($movie_sel)) {
-                                                $tahun_rilis = date('Y', strtotime($data['tahun_rilis']));
-                                                $selected = ($data['id_movies'] == $data_name['id_movies']) ? '' : ''; // Periksa apakah opsi ini yang dipilih
-                                                ?>
-                                                <option value="<?= $data['id_movies']; ?>" <?= $selected; ?>
-                                                    data-api-url="<?= $data['api_url']; ?>">
-                                                    <?= $data['judul'] . ' (' . $tahun_rilis . ')'; ?>
-                                                </option>
-                                            <?php } ?>
-                                        </select>
-                                        <input type="hidden" id="api-url" value="<?= $data_name['api_url']; ?>">
-                                        <!-- Input tersembunyi untuk menyimpan api_url -->
-                                    </div>
 
                                     <div class="col-lg-6">
                                         <label for="">Choose Language</label>
@@ -103,10 +83,7 @@
                                         </select>
                                     </div>
 
-                                </div>
-
-                                <div class="row p-4">
-                                    <div class="col-lg-12">
+                                    <div class="col-lg-6">
                                         <label for="">Directly Upload to Own Server</label>
                                         <i class="fas fa-info-circle ml-1" data-toggle="tooltip" data-placement="right"
                                             title="Upload your content to this server directly"></i>

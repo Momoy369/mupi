@@ -1,36 +1,36 @@
 <?php
-// Include file koneksi database
+// Include database connection file
 include '../include/koneksi.php';
 
-// Fungsi untuk menghapus data berdasarkan ID
+// Function to delete data by ID
 function deleteData($table, $id)
 {
     global $conn;
-    // Query SQL untuk menghapus data
+    // SQL query to delete data
     $query = "DELETE FROM $table WHERE id = ?";
-    // Persiapkan statement SQL
+    // Prepare SQL statements
     $stmt = $conn->prepare($query);
-    // Bind parameter ID
+    // Bind ID parameters
     $stmt->bind_param("i", $id);
-    // Eksekusi statement
+    // Execute statements
     $stmt->execute();
-    // Tutup statement
+    // Close statement
     $stmt->close();
 }
 
-// Fungsi untuk menghapus file dari local storage
+// Function to delete files from local storage
 function deleteFileFromStorage($fileName)
 {
-    $filePath = "../files/subtitles/movies/" . $fileName; // Sesuaikan dengan path storage Anda
+    $filePath = "../files/subtitles/movies/" . $fileName; // Adjust to your storage path
     if (file_exists($filePath)) {
-        unlink($filePath); // Hapus file dari local storage jika ada
+        unlink($filePath); // Delete files from local storage if any
     }
 }
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
 
-    // Dapatkan nama file dari database sebelum menghapus entri
+    // Get the file name from the database before deleting the entry
     $query = "SELECT url_sub FROM tbl_movie_subtitles WHERE id = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $id);
@@ -39,13 +39,16 @@ if (isset($_GET['id'])) {
     $stmt->fetch();
     $stmt->close();
 
-    // Hapus file dari local storage
+    // Delete files from local storage
     deleteFileFromStorage($fileName);
 
-    // Panggil fungsi delete untuk menghapus entri dari database
+    // Call the delete function to delete an entry from the database
     deleteData('tbl_movie_subtitles', $id);
 
-    // Redirect ke halaman setelah penghapusan data
-    header("Location: ../movie-subtitles");
-    exit(); // Pastikan untuk keluar setelah redirect
+    // Redirect to page after data deletion
+    ?>
+    <script type="text/javascript">
+        window.location = "javascript:history.go(-1)";
+    </script>
+    <?php
 }

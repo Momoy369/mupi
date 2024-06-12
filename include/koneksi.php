@@ -6,18 +6,18 @@ error_reporting(0);
 session_start();
 date_default_timezone_set("Asia/Jakarta");
 
-// Konfigurasi database
+// Database configuration
 $host = "localhost"; // Hostname
-$username = "root"; // Nama pengguna database
-$password = ""; // Sandi database
-$database = "mupi"; // Nama database
+$username = "root"; // Database user name
+$password = ""; // Database password
+$database = "mupi"; // Database name
 
-// Membuat koneksi
+// Making connections
 $conn = new mysqli($host, $username, $password, $database);
 
-// Memeriksa koneksi
+// Checking connections
 // if ($conn->connect_error) {
-//     die("Koneksi gagal: " . $conn->connect_error);
+//     die("Connection fail: " . $conn->connect_error);
 // } else {
-//     echo "Koneksi berhasil!";
+//     echo "Connection successful!";
 // }
