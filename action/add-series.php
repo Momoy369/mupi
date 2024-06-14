@@ -40,6 +40,8 @@ if (isset($_POST['submit'])) {
 
     $overview = addslashes($_POST['overview']);
 
+    $permalink = $_POST['titleHidden'];
+
     $duration = $_POST['duration'];
 
     // Break the string tagsString into individual tags
@@ -227,9 +229,9 @@ if (isset($_POST['submit'])) {
     }
 
     // Create a query to save film data along with poster image URLs into the database
-    $insert = "INSERT INTO tbl_series(judul, poster, jenis, genre, episodes, seasons, series_status, aktor, director, tahun_rilis, rating, api_url, tags, country, overview, production, duration, trailer_url, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $insert = "INSERT INTO tbl_series(judul, poster, jenis, genre, episodes, seasons, series_status, aktor, director, tahun_rilis, rating, api_url, tags, country, overview, production, duration, trailer_url, status, permalink) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($insert);
-    $stmt->bind_param("sssssssssssssssssss", $judul, $posterUrl, $jenis, $separatedValueGenre, $episodes, $seasons, $series_status, $actorIdsString, $directorIdsString, $tahun, $rating, $url, $tagIdsString, $separatedValueCountry, $overview, $productionIdsString, $duration, $trailerUrl, $status);
+    $stmt->bind_param("ssssssssssssssssssss", $judul, $posterUrl, $jenis, $separatedValueGenre, $episodes, $seasons, $series_status, $actorIdsString, $directorIdsString, $tahun, $rating, $url, $tagIdsString, $separatedValueCountry, $overview, $productionIdsString, $duration, $trailerUrl, $status, $permalink);
 
     // Query execution
     if ($stmt->execute()) {

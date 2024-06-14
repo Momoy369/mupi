@@ -148,6 +148,8 @@
                                         <label for="">Series Title</label>
                                         <input class="form-control" name="judul" id="judul"
                                             value="<?= stripslashes($resultSeries['judul']); ?>" required>
+                                        <input type="hidden" id="titleHidden" name="titleHidden"
+                                            value="<?= $resultSeries['permalink']; ?>">
                                     </div>
                                     <div class="col-lg-6">
                                         <label for="">Category</label>
@@ -462,6 +464,35 @@
     </script>
 
     <script>
+
+        function convertToPermalink(text) {
+            return text
+                .toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '') // Menghapus karakter non-alfanumerik kecuali spasi dan tanda hubung
+                .trim()
+                .replace(/\s+/g, '-') // Mengganti satu atau lebih spasi dengan tanda hubung
+                .replace(/-+/g, '-'); // Mengganti tanda hubung ganda dengan satu tanda hubung
+        }
+
+        function updatePermalink() {
+            const judulInput = document.getElementById('judul');
+            const titleHiddenInput = document.getElementById('titleHidden');
+            titleHiddenInput.value = convertToPermalink(judulInput.value);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const judulInput = document.getElementById('judul');
+            judulInput.addEventListener('input', updatePermalink);
+            judulInput.addEventListener('change', updatePermalink);
+        });
+
+        // Example function to programmatically set the value of the 'judul' input
+        function setJudulValue(value) {
+            const judulInput = document.getElementById('judul');
+            judulInput.value = value;
+            updatePermalink(); // Ensure the hidden input is updated
+        }
+
         function crawlTMDB() {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
@@ -478,6 +509,7 @@
                         .then(data => {
 
                             document.getElementById('judul').value = data.name || '';
+                            updatePermalink();
                             document.getElementById('tahun_rilis').value = data.first_air_date || '';
                             document.getElementById('rating').value = data.vote_average || '';
 

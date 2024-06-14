@@ -27,12 +27,14 @@ if (isset($_POST['submit'])) {
 
     $overview = addslashes($_POST['overview']);
 
+    $permalink = $_POST['titleHidden'];
+
     $duration = $_POST['duration'];
 
     // Create a query to update the movie data in the database (without changing the image and production)
-    $update = "UPDATE tbl_movies SET judul = ?, jenis = ?, genre = ?, kualitas = ?, tahun_rilis = ?, rating = ?, trailer_url = ?, country = ?, overview = ?, duration = ?, status = ? WHERE id_movies = ?";
+    $update = "UPDATE tbl_movies SET judul = ?, jenis = ?, genre = ?, kualitas = ?, tahun_rilis = ?, rating = ?, country = ?, overview = ?, duration = ?, trailer_url = ?, status = ?, permalink = ? WHERE id_movies = ?";
     $stmt = $conn->prepare($update);
-    $stmt->bind_param("sssssssssssi", $judul, $jenis, $separatedValueGenre, $kualitas, $tahun, $rating, $trailerUrl, $separatedValueCountry, $overview, $duration, $status, $id);
+    $stmt->bind_param("ssssssssssssi", $judul, $jenis, $separatedValueGenre, $kualitas, $tahun, $rating, $separatedValueCountry, $overview, $duration, $trailerUrl, $status, $permalink, $id);
 
     // Eksekusi query
     if ($stmt->execute()) {

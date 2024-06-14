@@ -3,8 +3,9 @@
 include '../include/koneksi.php';
 
 $nama = addslashes($_POST['nama_genre']);
+$permalink = $_POST['permalinkHidden'];
 
-$insert = "INSERT INTO tbl_genre (nama_genre) VALUES ('$nama')";
+$insert = "INSERT INTO tbl_genre (nama_genre, permalink) VALUES ('$nama', '$permalink')";
 
 if (mysqli_query($conn, $insert)) {
     // If saving is successful, navigate back to the genres.php page

@@ -79,6 +79,7 @@ function get_data($content, $id = 0)
             m.duration, 
             m.trailer_url, 
             m.status, 
+            m.permalink, 
             DATE_FORMAT(m.posted_at, '%d-%M-%Y') AS posted_at
         FROM tbl_movies m
         LEFT JOIN tbl_genre g ON FIND_IN_SET(g.genre_id, m.genre)
@@ -89,41 +90,114 @@ function get_data($content, $id = 0)
         LEFT JOIN tbl_production p ON FIND_IN_SET(p.id, m.production)
         LEFT JOIN tbl_tag t ON FIND_IN_SET(t.id, m.tags)";
 
-        if (!empty($_GET['genre'])) {
-            $genre_name = $conn->real_escape_string($_GET['genre']);
+        $where_conditions = [];
 
+        if (!empty($_GET['genre'])) {
+            $genre_name = urldecode($_GET['genre']);
+            $genre_name = str_replace('-', ' ', $conn->real_escape_string($_GET['genre']));
             $genre_query = "SELECT genre_id FROM tbl_genre WHERE nama_genre = '$genre_name'";
             $genre_result = $conn->query($genre_query);
-
             if ($genre_result && $genre_result->num_rows > 0) {
                 $genre_row = $genre_result->fetch_assoc();
                 $genre_id = $genre_row['genre_id'];
-
-                $query .= " WHERE FIND_IN_SET('$genre_id', m.genre) > 0";
+                $where_conditions[] = "FIND_IN_SET('$genre_id', m.genre) > 0";
             } else {
                 echo json_encode(["status" => "error", "message" => "Genre '$genre_name' not found"]);
                 return;
             }
-        } elseif (!empty($_GET['aktor'])) {
-            $aktor = $conn->real_escape_string($_GET['aktor']);
-            $query .= " WHERE FIND_IN_SET('$aktor', m.aktor) > 0";
-        } elseif (!empty($_GET['director'])) {
-            $director = $conn->real_escape_string($_GET['director']);
-            $query .= " WHERE FIND_IN_SET('$director', m.director) > 0";
-        } elseif (!empty($_GET['country'])) {
-            $country = $conn->real_escape_string($_GET['country']);
-            $query .= " WHERE FIND_IN_SET('$country', m.country) > 0";
-        } elseif (!empty($_GET['kualitas'])) {
-            $kualitas = $conn->real_escape_string($_GET['kualitas']);
-            $query .= " WHERE FIND_IN_SET('$kualitas', m.kualitas) > 0";
+        }
+
+        if (!empty($_GET['actor'])) {
+            $actor_name = urldecode($_GET['actor']);
+            $actor_name = str_replace('-', ' ', $conn->real_escape_string($_GET['actor']));
+            $actor_query = "SELECT id_aktor FROM tbl_aktor WHERE nama_aktor = '$actor_name'";
+            $actor_result = $conn->query($actor_query);
+            if ($actor_result && $actor_result->num_rows > 0) {
+                $actor_row = $actor_result->fetch_assoc();
+                $actor_id = $actor_row['id_aktor'];
+                $where_conditions[] = "FIND_IN_SET('$actor_id', m.aktor) > 0";
+            } else {
+                echo json_encode(["status" => "error", "message" => "Actor '$actor_name' not found"]);
+                return;
+            }
+        }
+
+        if (!empty($_GET['director'])) {
+            $director_name = urldecode($_GET['director']);
+            $director_name = str_replace('-', ' ', $conn->real_escape_string($_GET['director']));
+            $director_query = "SELECT id_director FROM tbl_director WHERE nama_director = '$director_name'";
+            $director_result = $conn->query($director_query);
+            if ($director_result && $director_result->num_rows > 0) {
+                $director_row = $director_result->fetch_assoc();
+                $director_id = $director_row['id_director'];
+                $where_conditions[] = "FIND_IN_SET('$director_id', m.director) > 0";
+            } else {
+                echo json_encode(["status" => "error", "message" => "Director '$director_name' not found"]);
+                return;
+            }
+        }
+
+        if (!empty($_GET['country'])) {
+            $country_name = urldecode($_GET['country']);
+            $country_name = str_replace('-', ' ', $conn->real_escape_string($_GET['country']));
+            $country_query = "SELECT country_id FROM tbl_countries WHERE country_name = '$country_name'";
+            $country_result = $conn->query($country_query);
+            if ($country_result && $country_result->num_rows > 0) {
+                $country_row = $country_result->fetch_assoc();
+                $country_id = $country_row['country_id'];
+                $where_conditions[] = "FIND_IN_SET('$country_id', m.country) > 0";
+            } else {
+                echo json_encode(["status" => "error", "message" => "Country '$country_name' not found"]);
+                return;
+            }
+        }
+
+        if (!empty($_GET['quality'])) {
+            $quality_name = urldecode($_GET['quality']);
+            $quality_name = $conn->real_escape_string($_GET['quality']);
+            $quality_query = "SELECT id_kualitas FROM tbl_kualitas WHERE nama_kualitas = '$quality_name'";
+            $quality_result = $conn->query($quality_query);
+            if ($quality_result && $quality_result->num_rows > 0) {
+                $quality_row = $quality_result->fetch_assoc();
+                $quality_id = $quality_row['id_kualitas'];
+                $where_conditions[] = "FIND_IN_SET('$quality_id', m.kualitas) > 0";
+            } else {
+                echo json_encode(["status" => "error", "message" => "Quality '$quality_name' not found"]);
+                return;
+            }
+        }
+
+        if (!empty($_GET['tags'])) {
+            $tags_name = urldecode($_GET['tags']);
+            $tags_name = str_replace('-', ' ', $conn->real_escape_string($_GET['tags']));
+            $tags_query = "SELECT id FROM tbl_tag WHERE tag = '$tags_name'";
+            $tags_result = $conn->query($tags_query);
+            if ($tags_result && $tags_result->num_rows > 0) {
+                $tags_row = $tags_result->fetch_assoc();
+                $tags_id = $tags_row['id'];
+                $where_conditions[] = "FIND_IN_SET('$tags_id', m.tags) > 0";
+            } else {
+                echo json_encode(["status" => "error", "message" => "Tags '$tags_name' not found"]);
+                return;
+            }
+        }
+
+        if (!empty($_GET['judul'])) {
+            $permalink = urldecode($_GET['judul']);
+            $permalink = $conn->real_escape_string($permalink);
+            $where_conditions[] = "m.permalink LIKE '%$permalink%'";
         }
 
         if ($id != 0) {
-            $query .= " AND m.id_movies = " . $id;
-        } else {
-            $query .= " GROUP BY m.id_movies";
+            $where_conditions[] = "m.id_movies = " . $id;
         }
-    } elseif ($content == 'tbl_series') {
+
+        if (count($where_conditions) > 0) {
+            $query .= " WHERE " . implode(" AND ", $where_conditions);
+        }
+
+        $query .= " GROUP BY m.id_movies";
+    } else if ($content == 'tbl_series') {
         $query = "
         SELECT 
             s.id_series, 
@@ -143,6 +217,7 @@ function get_data($content, $id = 0)
             s.duration, 
             s.trailer_url, 
             s.status, 
+            s.permalink, 
             DATE_FORMAT(s.posted_at, '%d-%M-%Y') AS posted_at
         FROM tbl_series s
         LEFT JOIN tbl_genre g ON FIND_IN_SET(g.genre_id, s.genre)
@@ -152,49 +227,65 @@ function get_data($content, $id = 0)
         LEFT JOIN tbl_production p ON FIND_IN_SET(p.id, s.production)
         LEFT JOIN tbl_tag t ON FIND_IN_SET(t.id, s.tags)";
 
-        if (!empty($_GET['genre'])) {
-            $genre_name = $conn->real_escape_string($_GET['genre']);
+        $where_conditions = [];
 
+        if (!empty($_GET['genre'])) {
+            $genre_name = urldecode($_GET['genre']);
+            $genre_name = str_replace('-', ' ', $conn->real_escape_string($_GET['genre']));
             $genre_query = "SELECT genre_id FROM tbl_genre WHERE nama_genre = '$genre_name'";
             $genre_result = $conn->query($genre_query);
-
             if ($genre_result && $genre_result->num_rows > 0) {
                 $genre_row = $genre_result->fetch_assoc();
                 $genre_id = $genre_row['genre_id'];
-
-                $query .= " WHERE FIND_IN_SET('$genre_id', s.genre) > 0";
+                $where_conditions[] = "FIND_IN_SET('$genre_id', s.genre) > 0";
             } else {
                 echo json_encode(["status" => "error", "message" => "Genre '$genre_name' not found"]);
                 return;
             }
-        } elseif (!empty($_GET['aktor'])) {
+        }
+
+        if (!empty($_GET['aktor'])) {
             $aktor = $conn->real_escape_string($_GET['aktor']);
-            $query .= " WHERE FIND_IN_SET('$aktor', s.aktor) > 0";
-        } elseif (!empty($_GET['director'])) {
+            $where_conditions[] = "FIND_IN_SET('$aktor', s.aktor) > 0";
+        }
+
+        if (!empty($_GET['director'])) {
             $director = $conn->real_escape_string($_GET['director']);
-            $query .= " WHERE FIND_IN_SET('$director', s.director) > 0";
-        } elseif (!empty($_GET['country'])) {
+            $where_conditions[] = "FIND_IN_SET('$director', s.director) > 0";
+        }
+
+        if (!empty($_GET['country'])) {
             $country = $conn->real_escape_string($_GET['country']);
-            $query .= " WHERE FIND_IN_SET('$country', s.country) > 0";
+            $where_conditions[] = "FIND_IN_SET('$country', s.country) > 0";
+        }
+
+        if (!empty($_GET['judul'])) {
+            $permalink = urldecode($_GET['judul']);
+            $permalink = $conn->real_escape_string($permalink);
+            $where_conditions[] = "s.permalink LIKE '%$permalink%'";
         }
 
         if ($id != 0) {
-            $query .= " AND s.id_series = " . $id;
-        } else {
-            $query .= " GROUP BY s.id_series";
+            $where_conditions[] = "s.id_series = " . $id;
         }
+
+        if (count($where_conditions) > 0) {
+            $query .= " WHERE " . implode(" AND ", $where_conditions);
+        }
+
+        $query .= " GROUP BY s.id_series";
     } else if ($content == 'tbl_series_episodes') {
         $query = "
-    SELECT 
-        se.id,
-        se.title,
-        se.external_url,
-        se.files,
-        se.short_desc,
-        se.posted_at,
-        GROUP_CONCAT(DISTINCT s.judul) AS series
-    FROM tbl_series_episodes se
-    LEFT JOIN tbl_series s ON se.series_id = s.id_series";
+        SELECT 
+            se.id,
+            se.title,
+            se.external_url,
+            se.files,
+            se.short_desc,
+            se.posted_at,
+            GROUP_CONCAT(DISTINCT s.judul) AS series
+        FROM tbl_series_episodes se
+        LEFT JOIN tbl_series s ON se.series_id = s.id_series";
         if ($id != 0) {
             $query .= " WHERE se.id = " . $id . " LIMIT 1";
         } else {
@@ -202,17 +293,17 @@ function get_data($content, $id = 0)
         }
     } else if ($content == 'tbl_series_subtitles') {
         $query = "
-    SELECT 
-        ss.id,
-        s.judul AS series,
-        se.title AS episode,
-        l.language,
-        ss.url_sub,
-        ss.posted_at
-    FROM tbl_series_subtitles ss
-    LEFT JOIN tbl_series s ON ss.series_id = s.id_series
-    LEFT JOIN tbl_series_episodes se ON ss.episodes_id = se.id
-    LEFT JOIN tbl_language l ON ss.language_id = l.id_language";
+        SELECT 
+            ss.id,
+            s.judul AS series,
+            se.title AS episode,
+            l.language,
+            ss.url_sub,
+            ss.posted_at
+        FROM tbl_series_subtitles ss
+        LEFT JOIN tbl_series s ON ss.series_id = s.id_series
+        LEFT JOIN tbl_series_episodes se ON ss.episodes_id = se.id
+        LEFT JOIN tbl_language l ON ss.language_id = l.id_language";
         if ($id != 0) {
             $query .= " WHERE ss.id = " . $id . " LIMIT 1";
         } else {
@@ -220,15 +311,15 @@ function get_data($content, $id = 0)
         }
     } else if ($content == 'tbl_movie_subtitles') {
         $query = "
-    SELECT 
-        ms.id,
-        m.judul AS movie,
-        l.language,
-        CONCAT('" . movie_subtitle . "', ms.url_sub) AS url_sub, 
-        ms.posted_at
-    FROM tbl_movie_subtitles ms
-    LEFT JOIN tbl_movies m ON ms.movie_id = m.id_movies
-    LEFT JOIN tbl_language l ON ms.language_id = l.id_language";
+        SELECT 
+            ms.id,
+            m.judul AS movie,
+            l.language,
+            CONCAT('" . movie_subtitle . "', ms.url_sub) AS url_sub, 
+            ms.posted_at
+        FROM tbl_movie_subtitles ms
+        LEFT JOIN tbl_movies m ON ms.movie_id = m.id_movies
+        LEFT JOIN tbl_language l ON ms.language_id = l.id_language";
         if ($id != 0) {
             $query .= " WHERE ms.id = " . $id . " LIMIT 1";
         } else {
@@ -236,14 +327,14 @@ function get_data($content, $id = 0)
         }
     } else if ($content == 'tbl_movies_file') {
         $query = "
-    SELECT 
-        mf.id,
-        m.judul AS movie,
-        mf.hosting_name,
-        mf.url_embed,
-        mf.posted_at
-    FROM tbl_movies_file mf
-    LEFT JOIN tbl_movies m ON mf.id_movie = m.id_movies";
+        SELECT 
+            mf.id,
+            m.judul AS movie,
+            mf.hosting_name,
+            mf.url_embed,
+            mf.posted_at
+        FROM tbl_movies_file mf
+        LEFT JOIN tbl_movies m ON mf.id_movie = m.id_movies";
         if ($id != 0) {
             $query .= " WHERE mf.id = " . $id . " LIMIT 1";
         } else {

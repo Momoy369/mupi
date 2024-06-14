@@ -29,13 +29,14 @@ if (isset($_POST['submit'])) {
     $separatedValueCountry = implode(',', $listOfCountry);
 
     $overview = addslashes($_POST['overview']);
+    $permalink = $_POST['titleHidden'];
 
     $duration = $_POST['duration'];
 
     // Create a query to update movie data in the database
-    $update = "UPDATE tbl_series SET judul = ?, jenis = ?, genre = ?, episodes = ?, seasons = ?, series_status = ?, tahun_rilis = ?, rating = ?, country = ?, overview = ?, duration = ?, trailer_url = ?, status = ? WHERE id_series = ?";
+    $update = "UPDATE tbl_series SET judul = ?, jenis = ?, genre = ?, episodes = ?, seasons = ?, series_status = ?, tahun_rilis = ?, rating = ?, country = ?, overview = ?, duration = ?, trailer_url = ?, status = ?, permalink = ? WHERE id_series = ?";
     $stmt = $conn->prepare($update);
-    $stmt->bind_param("sssssssssssssi", $judul, $jenis, $separatedValueGenre, $episodes, $seasons, $series_status, $tahun, $rating, $separatedValueCountry, $overview, $duration, $trailerUrl, $status, $id);
+    $stmt->bind_param("ssssssssssssssi", $judul, $jenis, $separatedValueGenre, $episodes, $seasons, $series_status, $tahun, $rating, $separatedValueCountry, $overview, $duration, $trailerUrl, $status, $permalink, $id);
 
     // Query execution
     if ($stmt->execute()) {

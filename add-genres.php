@@ -54,6 +54,7 @@
                                     <div class="col-lg-6">
                                         <label for="">Genre Name</label>
                                         <input type="text" class="form-control" name="nama_genre" id="nama_genre">
+                                        <input type="hidden" name="permalinkHidden" id="permalinkHidden">
                                     </div>
 
                                 </div>
@@ -85,6 +86,29 @@
     <?php include (ROOT_PATH . 'include/logout_components.php'); ?>
     <?php include (ROOT_PATH . 'include/components.php'); ?>
     <?php include (ROOT_PATH . 'include/addition-select.php'); ?>
+
+    <script>
+        function convertToPermalink(text) {
+            return text
+                .toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .trim()
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+        }
+
+        function updatePermalink() {
+            const genreInput = document.getElementById('nama_genre');
+            const permalinkHiddenInput = document.getElementById('permalinkHidden');
+            permalinkHiddenInput.value = convertToPermalink(genreInput.value);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const genreInput = document.getElementById('nama_genre');
+            genreInput.addEventListener('input', updatePermalink);
+            updatePermalink();
+        });
+    </script>
 
 </body>
 

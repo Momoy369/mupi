@@ -223,6 +223,7 @@ photo_director TEXT
 CREATE TABLE tbl_genre (
 genre_id INT PRIMARY KEY AUTO_INCREMENT,
 nama_genre VARCHAR(255),
+permalink VARCHAR(255),
 gambar_genre VARCHAR(255)
 );
 
@@ -256,6 +257,7 @@ production VARCHAR(255),
 duration VARCHAR(255),
 trailer_url TEXT,
 status INT DEFAULT 1,
+permalink VARCHAR(255),
 posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -304,6 +306,7 @@ production VARCHAR(255),
 duration VARCHAR(255),
 trailer_url TEXT,
 status INT DEFAULT 1,
+permalink VARCHAR(255),
 posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
