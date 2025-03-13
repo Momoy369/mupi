@@ -75,13 +75,13 @@
                                 <div class="col-md-12">
                                     <div class="fb-profile-block">
                                         <div class="fb-profile-block-thumb cover-container">
-                                            <img src="https://placehold.co/400x400" id="posterPreview3"
+                                            <img src="https://placehold.co/1607x400" id="posterPreview3"
                                                 alt="Poster Preview"
                                                 style="width: 100%; height: 100%; object-fit: cover;">
                                             <input type="hidden" name="photo3" id="posterPreview3">
                                             <div class="profile-img">
                                                 <a href="#">
-                                                    <img src="https://placehold.co/200x200" id="posterPreview"
+                                                    <img src="https://placehold.co/150x200" id="posterPreview"
                                                         alt="Poster Preview">
                                                 </a>
                                                 <input type="hidden" name="photo2" id="posterPreview2">
