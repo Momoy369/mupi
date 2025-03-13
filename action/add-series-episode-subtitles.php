@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
     $stmt_language->close();
 
     // Specify the file storage directory
-    $targetDirectory = "../files/subtitles/series/";
+    $targetDirectory = "$baseurl/files/subtitles/series/";
 
     // Specify the name of the file to save
     $fileName = "subtitle_" . str_replace(' ', '_', $judulSeries) . "_" . str_replace(' ', '_', $judulEpisodes) . "_" . str_replace(' ', '_', $languageName) . "_" . str_replace(' ', '_', $languageCode) . "." . pathinfo($_FILES['direct']['name'], PATHINFO_EXTENSION);
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
         $conn->close();
 
         // Redirect back to the appropriate page
-        header("Location: ../series-episode-subtitles?series=" . $series_id . "&episodes=" . $episodes_id);
+        header("Location: $baseurl/series-episode-subtitles?series=" . $series_id . "&episodes=" . $episodes_id);
         exit();
     } else {
         // Failed to move file, error handle here

@@ -1,6 +1,7 @@
 <?php
 
 include '../include/koneksi.php';
+include '../images/baseurl.php';
 
 if (isset($_POST['submit'])) {
 
@@ -39,7 +40,7 @@ if (isset($_POST['submit'])) {
     // Eksekusi query
     if ($stmt->execute()) {
         // If the update is successful, redirect to the movies.php page
-        header("Location: ../movies");
+        header("Location: $baseurl/movies");
         exit();
     } else {
         // If data update fails, display an error message
@@ -52,6 +53,6 @@ if (isset($_POST['submit'])) {
     $conn->close();
 } else {
     // If no form has been submitted, return to the movies.php page
-    header("Location: ../movies");
+    header("Location: $baseurl/movies");
     exit();
 }

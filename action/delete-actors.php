@@ -1,6 +1,7 @@
 <?php
 
 include '../include/koneksi.php';
+include '../images/baseurl.php';
 
 // Check if there is an ID received via the GET parameter
 if (isset($_GET['id_aktor'])) {
@@ -20,7 +21,7 @@ if (isset($_GET['id_aktor'])) {
 
         // Delete the actor image file from local storage if there is one
         if (!empty($fotoFilename)) {
-            $fotoFilePath = "../images/actors/" . $fotoFilename;
+            $fotoFilePath = "$baseurl/images/actors/" . $fotoFilename;
             if (file_exists($fotoFilePath)) {
                 unlink($fotoFilePath); // Delete actor image files
             }
@@ -37,10 +38,10 @@ if (isset($_GET['id_aktor'])) {
     $stmt->close();
 
     // Redirect back to actors.php page
-    header("Location: ../actors");
+    header("Location: $baseurl/actors");
     exit();
 } else {
     // If no ID is received, redirect to the actors.php page
-    header("Location: ../actors");
+    header("Location: $baseurl/actors");
     exit();
 }

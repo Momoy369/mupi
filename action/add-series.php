@@ -1,7 +1,7 @@
 <?php
 
 include '../include/koneksi.php';
-include '../include/baseurl.php';
+include '../images/baseurl.php';
 
 if (isset($_POST['submit'])) {
     // Retrieve data from the form

@@ -1,6 +1,7 @@
 <?php
 
 include '../include/koneksi.php';
+include '../images/baseurl.php';
 
 // Check if there is an ID received via the GET parameter
 if (isset($_GET['id_movies'])) {
@@ -20,7 +21,7 @@ if (isset($_GET['id_movies'])) {
 
         // Delete the poster image file from local storage if there is one
         if (!empty($posterFilename)) {
-            $posterFilePath = "../images/poster/" . $posterFilename;
+            $posterFilePath = "$baseurl/images/poster/" . $posterFilename;
             if (file_exists($posterFilePath)) {
                 unlink($posterFilePath); // Delete the poster image file
             }
@@ -37,10 +38,10 @@ if (isset($_GET['id_movies'])) {
     $stmt->close();
 
     // Redirect back to the movies.php page
-    header("Location: ../movies");
+    header("Location: $baseurl/movies");
     exit();
 } else {
     // If no ID is received, redirect to the movies.php page
-    header("Location: ../movies");
+    header("Location: $baseurl/movies");
     exit();
 }

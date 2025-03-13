@@ -1,6 +1,7 @@
 <?php
 
 include '../include/koneksi.php';
+include '../images/baseurl.php';
 
 // Check if there is a director ID received via the GET parameter
 if (isset($_GET['id_director'])) {
@@ -19,7 +20,7 @@ if (isset($_GET['id_director'])) {
         $directorPhoto = $row['photo_director'];
 
         // Delete image files from local storage
-        $filePath = "../images/directors/" . $directorPhoto;
+        $filePath = "$baseurl/images/directors/" . $directorPhoto;
         if (file_exists($filePath)) {
             unlink($filePath); // Delete image files from local storage
         }
@@ -35,10 +36,10 @@ if (isset($_GET['id_director'])) {
     }
 
     // Redirect back to directors.php page
-    header("Location: ../directors");
+    header("Location: $baseurl/directors");
     exit();
 } else {
     // If no director ID is received, redirect to the directors.php page
-    header("Location: ../directors");
+    header("Location: $baseurl/directors");
     exit();
 }

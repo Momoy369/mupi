@@ -1,6 +1,7 @@
 <?php
 
 include '../include/koneksi.php';
+include '../images/baseurl.php';
 
 $nama = addslashes($_POST['nama_aktor']);
 $photo_tmp = $_FILES['photo']['tmp_name'];
@@ -10,7 +11,7 @@ $strphoto_temp = str_replace(" ", "", $photo_tmp);
 
 $md5photo = time() . "_" . $strphoto;
 
-if (move_uploaded_file($strphoto_temp, "../images/actors/" . $md5photo)) {
+if (move_uploaded_file($strphoto_temp, "$baseurl/images/actors/" . $md5photo)) {
     $insert = "INSERT INTO tbl_aktor (nama_aktor, foto_aktor) VALUES ('$nama', '$md5photo')";
 
     if (mysqli_query($conn, $insert)) {
@@ -31,7 +32,7 @@ if (move_uploaded_file($strphoto_temp, "../images/actors/" . $md5photo)) {
 
     if (mysqli_query($conn, $insert)) {
         // If the saving is successful, redirect to the movies.php page
-        header("Location: ../actors");
+        header("Location: $baseurl/actors");
         exit();
     } else {
         // If it fails to save data, displays an error message

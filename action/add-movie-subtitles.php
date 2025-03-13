@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
         // If a file has been selected for upload
         if (!empty($directFile['name'])) {
             // Specify the file storage directory
-            $targetDirectory = "../files/subtitles/movies/";
+            $targetDirectory = "$baseurl/files/subtitles/movies/";
 
             // Specify the name of the file to save
             $fileName = "subtitle_" . str_replace(' ', '_', $judulMovie) . "_" . str_replace(' ', '_', $languageName) . "_" . str_replace(' ', '_', $languageCode) . "." . pathinfo($directFile['name'], PATHINFO_EXTENSION);
@@ -68,6 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
     $conn->close();
 
     // Redirect back to the appropriate page
-    header("Location: ../movies-subtitles?movies=" . $movie_id);
+    header("Location: $baseurl/movies-subtitles?movies=" . $movie_id);
     exit();
 }

@@ -1,6 +1,7 @@
 <?php
 
 include '../include/koneksi.php';
+include '../images/baseurl.php';
 
 // Function to delete episodes of a series along with related files
 function deleteSeriesEpisode($episode_id)
@@ -33,14 +34,12 @@ function deleteSeriesEpisode($episode_id)
             }
         }
         // Return series_id to return to the episode list page
+        mysqli_stmt_close($stmt);
         return $series_id;
     } else {
-        // If an error occurs, return false
+        // If an error occurs, mysqli_stmt_close($stmt);
         return false;
     }
-
-    // Tutup statement
-    mysqli_stmt_close($stmt);
 }
 
 // Check if there is an episode ID received via the GET parameter
@@ -51,13 +50,13 @@ if (isset($_GET['id'])) {
     $series_id = deleteSeriesEpisode($episode_id);
     if ($series_id !== false) {
         // Redirect back to the appropriate page
-        header("Location: ../series-episodes?episodes=" . $series_id);
+        header("Location: $baseurl/series-episodes?episodes=" . $series_id);
         exit();
     } else {
         echo "Error: Failed to delete episode.";
     }
 } else {
     // If no episode ID is received, redirect to the appropriate page
-    header("Location: ../series-episodes?episodes=" . $series_id);
+    header("Location: $baseurl/series-episodes?episodes=" . $series_id);
     exit();
 }

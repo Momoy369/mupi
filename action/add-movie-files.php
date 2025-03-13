@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
             $directFile = $_FILES['direct'];
 
             // Specify the file storage directory
-            $targetDirectory = "../files/movies-files/";
+            $targetDirectory = "$baseurl/files/movies-files/";
 
             // Specify the name of the file to save
             $targetFileName = $targetDirectory . "movie_" . str_replace(' ', '_', $judul) . "." . pathinfo($directFile['name'], PATHINFO_EXTENSION);
@@ -86,6 +86,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
     $conn->close();
 
     // Redirect back to the appropriate page
-    header("Location: ../movie-files?movies=" . $movie_id);
+    header("Location: $baseurl/movie-files?movies=" . $movie_id);
     exit();
 }

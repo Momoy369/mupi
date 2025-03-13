@@ -1,6 +1,7 @@
 <?php
 
 include '../include/koneksi.php';
+include '../images/baseurl.php';
 
 // Function to delete movie files and related data
 function deleteMovieFile($idMovieFile)
@@ -43,13 +44,13 @@ if (isset($_GET['id'])) {
     $idMovie = deleteMovieFile($idMovieFile);
     if ($idMovie !== false) {
         // Redirect back to the appropriate page
-        header("Location: ../movie-files?movies=" . $idMovie);
+        header("Location: $baseurl/movie-files?movies=" . $idMovie);
         exit();
     } else {
         echo "Error: Failed to delete movie file.";
     }
 } else {
     // If no movie file ID is received, redirect to the appropriate page
-    header("Location: ../movie-files?movies=" . $idMovie);
+    header("Location: $baseurl/movie-files?movies=" . $idMovie);
     exit();
 }

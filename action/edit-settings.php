@@ -11,10 +11,10 @@ if (isset($_POST['submit'])) {
     mysqli_query($conn, $query);
 
     if ($query) {
-        header("Location: ../settings");
+        header("Location: $baseurl/settings");
         exit();
     } else {
-        header("Location: ../settings");
+        header("Location: $baseurl/settings");
         exit();
     }
 }

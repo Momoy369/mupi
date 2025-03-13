@@ -1,7 +1,7 @@
 <?php
 
 include '../include/koneksi.php';
-include '../include/baseurl.php';
+include '../images/baseurl.php';
 
 if (isset($_POST['submit'])) {
     // Retrieve data from the form
@@ -211,7 +211,7 @@ if (isset($_POST['submit'])) {
 
     // Poster image file upload process
     if (isset($_FILES['photo']['name']) && $_FILES['photo']['name'] != "") {
-        $target_dir = "../images/posters/";
+        $target_dir = "$baseurl/images/posters/";
         $poster = basename($_FILES['photo']['name']);
         $target_filepath = $target_dir . $poster;
 
@@ -244,7 +244,7 @@ if (isset($_POST['submit'])) {
     if ($stmt->execute()) {
         // If the save is successful, redirect to the movies.php page
         echo "Data inserted successfully.<br>";
-        header("Location: ../movies");
+        header("Location: $baseurl/movies");
         exit();
     } else {
         // If it fails to save data, display an error message
@@ -259,6 +259,6 @@ if (isset($_POST['submit'])) {
 } else {
     // If no form has been submitted, return to the movies.php page
     echo "No form submitted.<br>";
-    header("Location: ../movies");
+    header("Location: $baseurl/movies");
     exit();
 }

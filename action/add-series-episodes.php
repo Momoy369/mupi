@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
 
     // Check if the file is uploaded
     if (isset($_FILES['files']) && $_FILES['files']['error'] == 0) {
-        $target_dir = "../files/series-files/";
+        $target_dir = "$baseurl/files/series-files/";
         $original_file_name = basename($_FILES["files"]["name"]);
         $file_extension = pathinfo($original_file_name, PATHINFO_EXTENSION);
         $file_name = "series-" . preg_replace("/[^a-zA-Z0-9]+/", "-", strtolower($series_title)) . "-" . preg_replace("/[^a-zA-Z0-9]+/", "-", strtolower($title)) . "." . $file_extension;
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
     // Query execution
     if (mysqli_stmt_execute($stmt)) {
         // Redirect to the success page or another desired page
-        header("Location: ../series-episodes?episodes=" . $series_id);
+        header("Location: $baseurl/series-episodes?episodes=" . $series_id);
         exit;
     } else {
         echo "Error: " . mysqli_error($conn);

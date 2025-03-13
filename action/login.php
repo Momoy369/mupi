@@ -1,13 +1,14 @@
 <?php
 session_start();
-include ("../include/koneksi.php");
+include("../include/koneksi.php");
+include("../images/baseurl.php");
 
 $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING);
 $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
 
 if (empty($email) || empty($password)) {
     $_SESSION['msg'] = "Email and password must be filled in.";
-    header("Location: ../index");
+    header("Location: $baseurl/index");
     exit;
 }
 
@@ -23,15 +24,15 @@ if (mysqli_num_rows($result) > 0) {
     if ($row['password'] === $hashed_password) {
         $_SESSION['id'] = $row['id_admin'];
         $_SESSION['admin_name'] = $row['email'];
-        header("Location: ../home");
+        header("Location: $baseurl/home");
         exit;
     } else {
         $_SESSION['msg'] = "Incorrect email or password.";
-        header("Location: ../index");
+        header("Location: $baseurl/index");
         exit;
     }
 } else {
     $_SESSION['msg'] = "Incorrect email or password.";
-    header("Location: ../index");
+    header("Location: $baseurl/index");
     exit;
 }
