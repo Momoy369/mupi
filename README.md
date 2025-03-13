@@ -55,7 +55,9 @@ email: ngadmin@mupi.com
 password: ngadmin
 ```
 
+## How to fetch movie detail?
 
+*Just copy Movie ID from TMDB, and paste to Movie form update. It will automatically fetch movie data or details from TMDB database, including images or posters and trailer URLs.*
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
