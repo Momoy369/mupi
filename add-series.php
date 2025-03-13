@@ -277,10 +277,10 @@
     </div>
     <!-- End of Page Wrapper -->
 
-    <?php include (ROOT_PATH . 'include/top.php'); ?>
-    <?php include (ROOT_PATH . 'include/logout_components.php'); ?>
-    <?php include (ROOT_PATH . 'include/components.php'); ?>
-    <?php include (ROOT_PATH . 'include/addition-select.php'); ?>
+    <?php include(ROOT_PATH . 'include/top.php'); ?>
+    <?php include(ROOT_PATH . 'include/logout_components.php'); ?>
+    <?php include(ROOT_PATH . 'include/components.php'); ?>
+    <?php include(ROOT_PATH . 'include/addition-select.php'); ?>
 
     <script>
         // Handle changes to radio buttons
@@ -388,7 +388,11 @@
 
                     var apiUrl = 'https://api.themoviedb.org/3/tv/';
 
-                    fetch(apiUrl + tmdbSeriesId + '?api_key=' + apiKey)
+                    fetch(apiUrl + tmdbSeriesId, {
+                        headers: {
+                            'Authorization': 'Bearer ' + apiKey
+                        }
+                    })
                         .then(response => response.json())
                         .then(data => {
                             // Fill out the form with data obtained from the TMDb API
@@ -494,7 +498,11 @@
                                 console.error('Error: Creator data not found');
                             }
 
-                            fetch(apiUrl + tmdbSeriesId + '/keywords?api_key=' + apiKey)
+                            fetch(apiUrl + tmdbSeriesId + '/keywords', {
+                                headers: {
+                                    'Authorization': 'Bearer ' + apiKey
+                                }
+                            })
                                 .then(response => response.json())
                                 .then(keywordsData => {
                                     // Make sure keyword data is available
@@ -536,7 +544,11 @@
                                 });
 
                             // Take credit cast and crew
-                            fetch(apiUrl + tmdbSeriesId + '/credits?api_key=' + apiKey)
+                            fetch(apiUrl + tmdbSeriesId + '/credits', {
+                                headers: {
+                                    'Authorization': 'Bearer ' + apiKey
+                                }
+                            })
                                 .then(response => response.json())
                                 .then(creditsData => {
                                     if (creditsData.cast && creditsData.cast.length > 0) {
@@ -574,7 +586,11 @@
                                 });
 
                             // Take the trailer
-                            fetch(apiUrl + tmdbSeriesId + '/videos?api_key=' + apiKey)
+                            fetch(apiUrl + tmdbSeriesId + '/videos', {
+                                headers: {
+                                    'Authorization': 'Bearer ' + apiKey
+                                }
+                            })
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.results && data.results.length > 0) {
