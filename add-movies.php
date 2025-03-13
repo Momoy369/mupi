@@ -75,13 +75,13 @@
                                 <div class="col-md-12">
                                     <div class="fb-profile-block">
                                         <div class="fb-profile-block-thumb cover-container">
-                                            <img src="https://via.placeholder.com/400" id="posterPreview3"
+                                            <img src="https://placehold.co/400x400" id="posterPreview3"
                                                 alt="Poster Preview"
                                                 style="width: 100%; height: 100%; object-fit: cover;">
                                             <input type="hidden" name="photo3" id="posterPreview3">
                                             <div class="profile-img">
                                                 <a href="#">
-                                                    <img src="https://via.placeholder.com/200" id="posterPreview"
+                                                    <img src="https://placehold.co/200x200" id="posterPreview"
                                                         alt="Poster Preview">
                                                 </a>
                                                 <input type="hidden" name="photo2" id="posterPreview2">
@@ -281,16 +281,16 @@
     </div>
     <!-- End of Page Wrapper -->
 
-    <?php include (ROOT_PATH . 'include/top.php'); ?>
-    <?php include (ROOT_PATH . 'include/logout_components.php'); ?>
-    <?php include (ROOT_PATH . 'include/components.php'); ?>
-    <?php include (ROOT_PATH . 'include/addition-select.php'); ?>
+    <?php include(ROOT_PATH . 'include/top.php'); ?>
+    <?php include(ROOT_PATH . 'include/logout_components.php'); ?>
+    <?php include(ROOT_PATH . 'include/components.php'); ?>
+    <?php include(ROOT_PATH . 'include/addition-select.php'); ?>
 
     <script>
-        // Handle changes to radio buttons
+
         document.querySelectorAll('input[name="status"]').forEach(function (radio) {
             radio.addEventListener('change', function () {
-                // Set hidden input value based on selected radio button
+
                 if (this.id === 'active') {
                     document.getElementById('statusInput').value = 1; // Active = 1
                 } else if (this.id === 'inactive') {
@@ -303,7 +303,7 @@
     </script>
 
     <script>
-        // Function for managing input tags, actors, and directors
+
         function setupInput(inputId, hiddenInputId, displayId, dataArray) {
             var input = document.getElementById(inputId);
             var hiddenInput = document.getElementById(hiddenInputId);
@@ -314,40 +314,37 @@
                     var item = this.value.trim();
                     if (item !== '') {
                         data.push(item);
-                        this.value = ''; // Reset input value
-                        updateDisplay(); // Update display
-                        updateHiddenInput(); // Update hidden input
+                        this.value = '';
+                        updateDisplay();
+                        updateHiddenInput();
                     }
                 }
             });
 
             function updateDisplay() {
                 var display = document.getElementById(displayId);
-                display.innerHTML = ''; // Clear display
+                display.innerHTML = '';
 
                 data.forEach(function (item, index) {
                     var element = document.createElement('span');
                     element.textContent = item;
                     display.appendChild(element);
                     if (index !== data.length - 1) {
-                        // Add comma after each item except the last one
+
                         display.appendChild(document.createTextNode(' '));
                     }
                 });
             }
 
             function updateHiddenInput() {
-                hiddenInput.value = data.join(''); // Set hidden input value to the joined items
+                hiddenInput.value = data.join('');
             }
         }
 
-        // Call the function to manage input tags
         setupInput('tags', 'tagsHidden', 'tagsDisplay', tags);
 
-        // Call the function to manage input actors
         setupInput('actors', 'actorsHidden', 'actorsDisplay', actors);
 
-        // Call the function to manage input directors
         setupInput('directors', 'directorsHidden', 'directorsDisplay', directors);
     </script>
 
@@ -356,10 +353,10 @@
         function convertToPermalink(text) {
             return text
                 .toLowerCase()
-                .replace(/[^a-z0-9\s-]/g, '') // Menghapus karakter non-alfanumerik kecuali spasi dan tanda hubung
+                .replace(/[^a-z0-9\s-]/g, '')
                 .trim()
-                .replace(/\s+/g, '-') // Mengganti satu atau lebih spasi dengan tanda hubung
-                .replace(/-+/g, '-'); // Mengganti tanda hubung ganda dengan satu tanda hubung
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
         }
 
         function updatePermalink() {
@@ -374,11 +371,10 @@
             judulInput.addEventListener('change', updatePermalink);
         });
 
-        // Example function to programmatically set the value of the 'judul' input
         function setJudulValue(value) {
             const judulInput = document.getElementById('judul');
             judulInput.value = value;
-            updatePermalink(); // Ensure the hidden input is updated
+            updatePermalink();
         }
 
         function crawlTMDB() {
@@ -392,37 +388,36 @@
 
                     var apiUrl = 'https://api.themoviedb.org/3/movie/';
 
-                    fetch(apiUrl + tmdbMovieId + '?api_key=' + apiKey)
+                    fetch(apiUrl + tmdbMovieId, {
+                        headers: {
+                            'Authorization': 'Bearer ' + apiKey
+                        }
+                    })
                         .then(response => response.json())
                         .then(data => {
-                            // Fill out the form with data obtained from the TMDb API
+
                             document.getElementById('judul').value = data.original_title || '';
                             updatePermalink();
                             document.getElementById('tahun_rilis').value = data.release_date || '';
                             document.getElementById('rating').value = data.vote_average || '';
 
-                            // Retrieves the genre name of each TMDb genre object
                             const genresTmdb = data.genres.map(genre => genre.name);
 
-                            // Gets the genre dropdown option
                             const genreDropdown = document.getElementById('genre-movies');
 
-                            // Loop through each genre dropdown option
                             for (let i = 0; i < genreDropdown.options.length; i++) {
-                                // If the genre name in the dropdown is in the TMDb genre data, mark it as selected
+
                                 if (genresTmdb.includes(genreDropdown.options[i].text)) {
                                     genreDropdown.options[i].selected = true;
                                 }
                             }
 
-                            // Call the trigger('change') method to update the Select2 plugin display
                             $(genreDropdown).trigger('change');
 
-                            // Takes the name of the production company from each production company object
                             const productionCompanies = data.production_companies.map(company => company.name);
-                            // Combines production company names into one string
+
                             const productionCompaniesString = productionCompanies.join(', ');
-                            // Fill out the production companies form
+
                             document.getElementById('productionCompanies').value = productionCompaniesString || '';
 
                             const countriesTmdb = data.production_countries.map(country => country.name);
@@ -437,10 +432,8 @@
 
                             $(countryDropdown).trigger('change');
 
-                            // Populates the input with ID 'overview' with the overview value from the TMDb API response
                             document.getElementById('overview').value = data.overview || 'Overview not available';
 
-                            // Set the src attribute of the img element to display the poster image from the TMDb API response
                             const posterPath = data.poster_path;
                             const posterUrl = posterPath ? 'https://image.tmdb.org/t/p/w500' + posterPath : 'https://t4.ftcdn.net/jpg/02/12/52/91/360_F_212529193_YRhcQCaJB9ugv5dFzqK25Uo9Ivm7B9Ca.jpg';
                             document.getElementById('posterPreview').src = posterUrl;
@@ -451,41 +444,38 @@
 
                             document.getElementById('posterPreview3').value = posterUrl || '';
 
-                            // Retrieves the duration of the movie (duration) from the TMDb API response and fills the element with the ID 'duration'
                             const duration = data.runtime;
                             document.getElementById('duration').value = duration ? duration + ' minutes' : 'Duration not available';
 
-                            fetch(apiUrl + tmdbMovieId + '/keywords?api_key=' + apiKey)
+                            fetch(apiUrl + tmdbMovieId + '/keywords', {
+                                headers: {
+                                    'Authorization': 'Bearer ' + apiKey
+                                }
+                            })
                                 .then(response => response.json())
                                 .then(keywordsData => {
-                                    // Make sure keyword data is available
                                     if (keywordsData.keywords && keywordsData.keywords.length > 0) {
-                                        // Retrieves keywords from the TMDb API response
+
                                         const keywords = keywordsData.keywords.map(keyword => keyword.name);
 
-                                        // Displays keywords in the #tagsDisplay element
                                         const tagsDisplay = document.getElementById('tagsDisplay');
-                                        tagsDisplay.innerHTML = ''; // Cleaning up previous content
+                                        tagsDisplay.innerHTML = '';
 
                                         keywords.forEach((keyword, index) => {
                                             const tagElement = document.createElement('span');
                                             tagElement.textContent = keyword;
                                             tagsDisplay.appendChild(tagElement);
 
-                                            // Add a comma after each keyword except the last one
                                             if (index < keywords.length - 1) {
                                                 tagsDisplay.appendChild(document.createTextNode(', '));
                                             }
                                         });
 
-                                        // Fills the hidden input value #tagsHidden with keywords separated by commas
                                         document.getElementById('tagsHidden').value = keywords.join(',');
 
-                                        // Call the trigger('change') method after the keyword is displayed
                                         $('#tagsHidden').trigger('change');
                                     } else {
                                         console.error('Error: Keywords data not found');
-                                        // Handle error here
                                     }
                                 })
                                 .catch(error => {
@@ -493,14 +483,17 @@
                                     alert('Terjadi kesalahan saat mengambil data keywords.');
                                 });
 
-                            fetch(apiUrl + tmdbMovieId + '/videos?api_key=' + apiKey)
+                            fetch(apiUrl + tmdbMovieId + '/videos', {
+                                headers: {
+                                    'Authorization': 'Bearer ' + apiKey
+                                }
+                            })
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.results && data.results.length > 0) {
-                                        // Take the URL of the first trailer from the response
+
                                         const trailerUrl = `https://www.youtube.com/embed/${data.results[0].key}`;
 
-                                        // Create an iframe element to display the trailer
                                         const iframe = document.createElement('iframe');
                                         iframe.setAttribute('class', 'embed-responsive-item');
                                         iframe.setAttribute('src', trailerUrl);
@@ -509,19 +502,14 @@
                                         iframe.setAttribute('frameborder', '0');
                                         iframe.setAttribute('allowfullscreen', '');
 
-                                        // Get div element with ID 'trailer'
                                         const trailerDiv = document.getElementById('trailer');
 
-                                        // Empty the contents of the div element if it already has content
                                         trailerDiv.innerHTML = '';
 
-                                        // Insert iframe element into 'trailer' div element
                                         trailerDiv.appendChild(iframe);
 
-                                        // Take a hidden input element to store the trailer URL
                                         const hiddenTrailerInput = document.getElementById('trailer-url');
 
-                                        // Set the trailer URL value to the hidden input
                                         hiddenTrailerInput.value = trailerUrl;
                                     } else {
                                         console.log('Trailer not available');
@@ -532,61 +520,56 @@
                                     alert('An error occurred while retrieving the trailer.');
                                 });
 
-                            // Take credit cast
-                            fetch(apiUrl + tmdbMovieId + '/credits?api_key=' + apiKey)
+                            fetch(apiUrl + tmdbMovieId + '/credits', {
+                                headers: {
+                                    'Authorization': 'Bearer ' + apiKey
+                                }
+                            })
                                 .then(response => response.json())
                                 .then(creditsData => {
                                     if (creditsData.cast && creditsData.cast.length > 0) {
-                                        // Retrieves the actor name of each TMDb cast object
+
                                         const actors = creditsData.cast.map(actor => actor.name);
 
-                                        // Displays actors in the #actorsDisplay element
                                         const actorsDisplay = document.getElementById('actorsDisplay');
-                                        actorsDisplay.innerHTML = ''; // Cleaning up previous content
+                                        actorsDisplay.innerHTML = '';
 
                                         actors.forEach((actor, index) => {
                                             const actorElement = document.createElement('span');
                                             actorElement.textContent = actor;
                                             actorsDisplay.appendChild(actorElement);
 
-                                            // Add a comma after each actor's name except the last one
                                             if (index < actors.length - 1) {
                                                 actorsDisplay.appendChild(document.createTextNode(', '));
                                             }
                                         });
 
-                                        // Populates the hidden input value #actorsHidden with actor names separated by commas
                                         document.getElementById('actorsHidden').value = actors.join(',');
 
-                                        // Call the trigger('change') method after the actor name is displayed
                                         $('#actorsHidden').trigger('change');
                                     } else {
                                         console.error('Error: Actor data not found');
                                     }
 
                                     if (creditsData.crew && creditsData.crew.length > 0) {
-                                        // Retrieves the director's name from TMDb crew data
+
                                         const directors = creditsData.crew.filter(member => member.job === 'Director').map(director => director.name);
 
-                                        // Displays the director in the #directorsDisplay element
                                         const directorsDisplay = document.getElementById('directorsDisplay');
-                                        directorsDisplay.innerHTML = ''; // Cleaning up previous content
+                                        directorsDisplay.innerHTML = '';
 
                                         directors.forEach((director, index) => {
                                             const directorElement = document.createElement('span');
                                             directorElement.textContent = director;
                                             directorsDisplay.appendChild(directorElement);
 
-                                            // Add a comma after each director's name except the last
                                             if (index < directors.length - 1) {
                                                 directorsDisplay.appendChild(document.createTextNode(', '));
                                             }
                                         });
 
-                                        // Fills the hidden input value #directorsHidden with the director names separated by commas
                                         document.getElementById('directorsHidden').value = directors.join(',');
 
-                                        // Call the trigger('change') method after the director name is displayed
                                         $('#directorsHidden').trigger('change');
                                     } else {
                                         console.error('Error: Director data not found');
