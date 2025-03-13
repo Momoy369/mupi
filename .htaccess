@@ -5,4 +5,4 @@ RewriteEngine On
 RewriteRule ^(action/)?(add-|delete-|edit-)?(actors|countries|directors|genres|movie-subtitles|movies|movie-files|qualities|series|series-episode-subtitles|series-episodes|series-episodes-files)$ $1$2$3.php [NC,L]
 
 # Specific non-prefixed pages
-RewriteRule ^(home|index|settings|movies-subtitles)$ $1.php [NC,L]
+RewriteRule ^(home|index|settings|movies-subtitles|countries)$ $1.php [NC,L]
