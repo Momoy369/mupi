@@ -3,7 +3,19 @@
     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
         aria-haspopup="true" aria-expanded="false">
         <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-            <?php $nama_admin = isset ($_SESSION['admin_name']) ? mysqli_fetch_assoc(mysqli_query($conn, "SELECT nama_admin FROM tbl_admin WHERE email='{$_SESSION['admin_name']}'"))['nama_admin'] ?? 'Admin tidak ditemukan' : 'Sesi admin_name tidak tersedia';
+            <?php
+            if (!isset($_SESSION['admin_name'])) {
+                header("Location: login.php");
+                exit();
+            }
+
+            $nama_admin = mysqli_fetch_assoc(mysqli_query($conn, "SELECT nama_admin FROM tbl_admin WHERE email='{$_SESSION['admin_name']}'"))['nama_admin'] ?? null;
+
+            if ($nama_admin === null) {
+                header("Location: $baseurl/index");
+                exit();
+            }
+
             echo $nama_admin;
             ?>
         </span>
